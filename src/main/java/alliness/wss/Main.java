@@ -1,4 +1,4 @@
-package alliness.websocketserver;
+package alliness.wss;
 
 
 public class Main {

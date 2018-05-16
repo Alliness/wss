@@ -1,7 +1,7 @@
-package alliness.websocketserver;
+package alliness.wss;
 
-import alliness.websocketserver.Api.Api;
-import alliness.websocketserver.socket.WebSocketServer;
+import alliness.wss.api.Api;
+import alliness.wss.socket.WebSocketServer;
 
 public class App {
 

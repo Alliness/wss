@@ -1,4 +1,4 @@
-package alliness.websocketserver.socket;
+package alliness.wss.socket;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;

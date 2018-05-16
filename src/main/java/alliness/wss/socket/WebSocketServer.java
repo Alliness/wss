@@ -1,4 +1,4 @@
-package alliness.websocketserver.socket;
+package alliness.wss.socket;
 
 import alliness.core.ConfigLoader;
 import org.apache.log4j.Logger;

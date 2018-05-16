@@ -1,8 +1,7 @@
-package alliness.websocketserver.Api;
+package alliness.wss.api;
 
 import alliness.core.ConfigLoader;
-import alliness.websocketserver.App;
-import alliness.websocketserver.socket.WebSocketConnection;
+import alliness.wss.socket.WebSocketConnection;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
