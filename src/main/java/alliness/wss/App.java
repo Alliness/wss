@@ -1,12 +1,12 @@
 package alliness.wss;
 
 import alliness.wss.api.Api;
+import alliness.wss.game.GameWorld;
 import alliness.wss.socket.WebSocketServer;
 
 public class App {
 
     private static App instnace;
-    private Object info;
 
     public static App getInstnace() {
         return instnace;
@@ -14,6 +14,7 @@ public class App {
 
     private App() {
         Api             api    = Api.getInstance();
+        GameWorld world = GameWorld.getInstance();
         WebSocketServer socket = WebSocketServer.getInstance();
         api.run();
         socket.run();

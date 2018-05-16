@@ -1,5 +1,6 @@
 package alliness.wss.socket;
 
+import alliness.wss.game.GameWorld;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONArray;
@@ -101,7 +102,7 @@ public class WebSocketConnection {
 
         public void handleMessage(String message) {
             try {
-                System.out.println(message);
+                GameWorld.getInstance().handleMessage(message);
                 receivedMesages.add(message);
             } catch (JSONException ignored) {
             }

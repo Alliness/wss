@@ -32,11 +32,32 @@ public class Api extends Thread {
             });
         });
 
+        path("/game", () -> {
+            get("/index", (request, response) -> {
+                //todo index.html(template);
+                System.out.println("/ index ");
+                return "/index";
+            });
+            path("/page", () -> {
+                get("/form", (request, response) -> {
+                    //todo form.html page
+                    System.out.println("/form");
+                    return "/form";
+                });
+                get("/battle", (request, response) -> {
+                    //todo battle.html page
+                    System.out.println("/battle");
+                    return "/battle";
+                });
+            });
+        });
+
         notFound((request, response) -> {
             response.status(404);
             response.body(new JSONObject().put("code", 404).put("message", "not found").toString());
             return response.body();
         });
+
         log.info(String.format("Api Web Server port: %s",port()));
 
     }
