@@ -29,6 +29,7 @@ public class BattleManager {
     }
 
     public void addAvatar(Avatar avatar) throws GameException {
+
         for (Avatar av : avatars) {
             if (av.getConnection().getUUID().equals(avatar.getConnection().getUUID())) {
                 avatars.forEach(avatar1 -> avatar1.getConnection().sendMessage("battle/disconnect", new JSONObject().put("error", "duplicate connections")));
@@ -84,7 +85,7 @@ public class BattleManager {
     private JSONObject battleInfo() {
         JSONArray arr = new JSONArray();
 
-        avatars.forEach(avatar -> arr.put(avatar.getInfo()));
+        avatars.forEach(avatar -> arr.put(avatar.getPlayer().serialize()));
 
         return new JSONObject().put("players", arr)
                                .put("state", state);

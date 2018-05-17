@@ -6,8 +6,8 @@ import org.json.JSONObject;
 public class Avatar {
 
     private final WebSocketConnection.Connection connection;
-    private       PlayerDTO                      player;
-    private       boolean                        info;
+    private PlayerDTO player;
+    private JSONObject info;
 
     public Avatar(PlayerDTO player, WebSocketConnection.Connection connection) {
         this.player = player;
@@ -32,7 +32,10 @@ public class Avatar {
     }
 
     public JSONObject getInfo() {
+        JSONObject connectionData = connection.getInfo();
+        connectionData.remove("fromClient");
+        connectionData.remove("toClient");
         return new JSONObject().put("player", player.serialize())
-                               .put("connection", connection.getUUID());
+                .put("connection", connectionData);
     }
 }

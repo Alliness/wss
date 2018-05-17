@@ -36,6 +36,7 @@ public class Api extends Thread {
             path("/player", () -> {
                 post("/new", ApiHandler::newPlayer);
                 post("/connect", ApiHandler::connect);
+                get("/available", ApiHandler::availablePlayers);
             });
             get("/index", (request, response) -> {
                 //todo index.html(template);

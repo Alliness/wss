@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("all")
 public class WebSocketConnection {
 
-    private static final Logger           log         = Logger.getLogger(WebSocketConnection.class);
-    private              List<Connection> connections = Collections.synchronizedList(new ArrayList<>());
+    private static final Logger log = Logger.getLogger(WebSocketConnection.class);
+    private List<Connection> connections = Collections.synchronizedList(new ArrayList<>());
     private final long startTime;
 
     private static WebSocketConnection instance;
@@ -65,13 +65,7 @@ public class WebSocketConnection {
     public JSONArray getConnectionsInfo() {
         JSONArray arr = new JSONArray();
         connections.forEach(connection -> {
-            JSONObject jcon = new JSONObject();
-            jcon.put("uuid", connection.getUUID())
-                .put("connectTime", connection.getConnectTime())
-                .put("remoteAddress", connection.getSession().getRemoteAddress())
-                .put("toClient", connection.getSendedMessages())
-                .put("fromClient", connection.getReceivedMesages());
-            arr.put(jcon);
+            arr.put(connection.getInfo());
         });
         return arr;
     }
@@ -89,12 +83,12 @@ public class WebSocketConnection {
 
     public class Connection extends Thread {
 
-        private String  uuid;
+        private String uuid;
         private Session session;
         private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        private       List<ScheduledFuture<?>> tasksLists               = Collections.synchronizedList(new ArrayList<>());
-        private       List<Runnable>           commands                 = Collections.synchronizedList(new ArrayList<>());
-        private long             connectTime;
+        private List<ScheduledFuture<?>> tasksLists = Collections.synchronizedList(new ArrayList<>());
+        private List<Runnable> commands = Collections.synchronizedList(new ArrayList<>());
+        private long connectTime;
         private List<JSONObject> sendedMessages;
 
         private List<String> receivedMesages;
@@ -186,6 +180,17 @@ public class WebSocketConnection {
 
         public List<String> getReceivedMesages() {
             return receivedMesages;
+        }
+
+        public JSONObject getInfo() {
+            JSONObject jcon = new JSONObject();
+            jcon.put("uuid", getUUID())
+                    .put("connectTime", getConnectTime())
+                    .put("remoteAddress", getSession().getRemoteAddress())
+                    .put("toClient", getSendedMessages())
+                    .put("fromClient", getReceivedMesages());
+
+            return jcon;
         }
     }
 

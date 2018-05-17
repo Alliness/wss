@@ -6,9 +6,12 @@ import alliness.core.helpers.FReader;
 import alliness.core.helpers.FWriter;
 import alliness.wss.game.GameException;
 import alliness.wss.game.GameWorld;
+import alliness.wss.game.battle.BattleManager;
+import alliness.wss.game.player.Avatar;
 import alliness.wss.game.player.PlayerDTO;
 import alliness.wss.socket.WebSocketConnection;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import spark.Request;
@@ -25,13 +28,13 @@ class ApiHandler {
 
         try {
             JSONObject body = new JSONObject(request.body());
-            String     name = body.getString("name");
+            String name = body.getString("name");
             if (name == null || Objects.equals(name, "")) {
                 return new JSONObject().put("success", false).put("error", "player name  is invalid");
             }
 
             JSONObject defPlayerJson = FReader.readJSON(new File(Dir.RESOURCES + "/players/default.json"));
-            PlayerDTO  player        = Serializable.deserialize(defPlayerJson, PlayerDTO.class);
+            PlayerDTO player = Serializable.deserialize(defPlayerJson, PlayerDTO.class);
 
 
             player.setName(name);
@@ -53,8 +56,8 @@ class ApiHandler {
     static Object connect(Request request, Response response) {
 
         JSONObject body = new JSONObject(request.body());
-        String     uuid = body.getString("uuid");
-        String     name = body.getString("name");
+        String uuid = body.getString("uuid");
+        String name = body.getString("name");
 
 
         WebSocketConnection.Connection connection = WebSocketConnection.getInstance().getConnection(uuid);
@@ -72,11 +75,33 @@ class ApiHandler {
         PlayerDTO player = Serializable.deserialize(FReader.readJSON(file), PlayerDTO.class);
 
         try {
+            for (Avatar avatar : BattleManager.getInstance().getAvatars()) {
+                if (avatar.getPlayer().getName().equals(name)) {
+                    return new JSONObject().put("success", false).put("error", String.format("player %s already selected", name));
+                }
+            }
             GameWorld.getInstance().createAvatar(player, connection);
             return new JSONObject().put("success", true);
         } catch (GameException e) {
             return new JSONObject().put("success", false).put("error", "unable to connect to battle").put("message", e.getMessage());
         }
 
+    }
+
+    public static Object availablePlayers(Request request, Response response) {
+        JSONArray players = new JSONArray();
+
+        File dir = new File(Dir.RESOURCES+"/players/available");
+        for (File file : dir.listFiles()) {
+            try{
+                JSONObject obj = FReader.readJSON(file);
+                assert obj != null;
+                PlayerDTO player = Serializable.deserialize(obj, PlayerDTO.class);
+                players.put(player.serialize());
+            }catch (JSONException e){
+                return new JSONObject().put("success", false).put("message", e.getMessage());
+            }
+        }
+        return players;
     }
 }

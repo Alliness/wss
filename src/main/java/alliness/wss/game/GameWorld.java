@@ -29,10 +29,7 @@ public class GameWorld extends Thread {
             JSONObject obj    = new JSONObject(message);
             String     action = obj.getString("action");
             JSONObject body   = obj.getJSONObject("body");
-            switch (action) {
-                case "/battle/connect": //todo
-                    break;
-            }
+
 
         } catch (JSONException e) {
             log.error("unable to handle message", e);
