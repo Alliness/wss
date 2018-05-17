@@ -8,9 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -25,6 +23,7 @@ public class WebSocketConnection {
     private final long startTime;
 
     private static WebSocketConnection instance;
+    private boolean info;
 
     public synchronized static WebSocketConnection getInstance() {
         if (instance == null) {
@@ -46,6 +45,10 @@ public class WebSocketConnection {
         return info;
     }
 
+    private String generateUUID() {
+        return UUID.randomUUID().toString();
+    }
+
     public Connection add(Session session) {
         return new Connection(session);
     }
@@ -63,42 +66,58 @@ public class WebSocketConnection {
         JSONArray arr = new JSONArray();
         connections.forEach(connection -> {
             JSONObject jcon = new JSONObject();
-            jcon.put("connectTime", connection.getConnectTime());
-            jcon.put("remoteAddress", connection.getSession().getRemoteAddress());
-            jcon.put("send", connection.getSendedMessages());
-            jcon.put("recevied", connection.getReceivedMesages());
+            jcon.put("uuid", connection.getUUID())
+                .put("connectTime", connection.getConnectTime())
+                .put("remoteAddress", connection.getSession().getRemoteAddress())
+                .put("toClient", connection.getSendedMessages())
+                .put("fromClient", connection.getReceivedMesages());
             arr.put(jcon);
         });
         return arr;
     }
 
-    /**
-     *
-     */
+    public Connection getConnection(String uuid) {
+
+        Optional<Connection> res = connections.stream().filter(connection -> connection.getUUID().equals(uuid)).findFirst();
+        if (res.isPresent()) {
+            return res.get();
+        } else {
+            return null;
+        }
+
+    }
+
     public class Connection extends Thread {
 
+        private String  uuid;
         private Session session;
         private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         private       List<ScheduledFuture<?>> tasksLists               = Collections.synchronizedList(new ArrayList<>());
         private       List<Runnable>           commands                 = Collections.synchronizedList(new ArrayList<>());
         private long             connectTime;
         private List<JSONObject> sendedMessages;
-        private List<String>     receivedMesages;
+
+        private List<String> receivedMesages;
 
         public Connection(Session session) {
             if (!connections.contains(this)) {
                 this.session = session;
                 connectTime = System.currentTimeMillis();
-
                 sendedMessages = new ArrayList<>();
                 receivedMesages = new ArrayList<>();
-
+                uuid = generateUUID();
                 connections.add(this);
+
+                sendMessage("connection/id", new JSONObject().put("uuid", uuid));
             } else {
+                sendMessage("connection/error", new JSONObject().put("reason", "duplicate connection"));
                 interrupt();
             }
         }
 
+        public String getUUID() {
+            return uuid;
+        }
 
         public void handleMessage(String message) {
             try {

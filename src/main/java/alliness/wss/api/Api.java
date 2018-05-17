@@ -33,6 +33,10 @@ public class Api extends Thread {
         });
 
         path("/game", () -> {
+            path("/player", () -> {
+                post("/new", ApiHandler::newPlayer);
+                post("/connect", ApiHandler::connect);
+            });
             get("/index", (request, response) -> {
                 //todo index.html(template);
                 System.out.println("/ index ");

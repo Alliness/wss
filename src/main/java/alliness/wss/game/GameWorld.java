@@ -1,5 +1,9 @@
 package alliness.wss.game;
 
+import alliness.wss.game.battle.BattleManager;
+import alliness.wss.game.player.Avatar;
+import alliness.wss.game.player.PlayerDTO;
+import alliness.wss.socket.WebSocketConnection;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,13 +26,10 @@ public class GameWorld extends Thread {
 
     public void handleMessage(String message) {
         try {
-            JSONObject obj = new JSONObject(message);
-            String action = obj.getString("action");
-            JSONObject body = obj.getJSONObject("body");
+            JSONObject obj    = new JSONObject(message);
+            String     action = obj.getString("action");
+            JSONObject body   = obj.getJSONObject("body");
             switch (action) {
-                case "/player/new":
-                    createNewPlayer(body);
-                    break;
                 case "/battle/connect": //todo
                     break;
             }
@@ -38,17 +39,9 @@ public class GameWorld extends Thread {
         }
     }
 
-    /**
-     * Creates new Player
-     *
-     * @param body
-     */
-    private void createNewPlayer(JSONObject body) {
-        // create new JSONObject
-        // store in dir
-        // create avatar
-        // link player dto
-        // link session
-        // set avatar to battlemanger
+    public void createAvatar(PlayerDTO player, WebSocketConnection.Connection connection) throws GameException {
+
+        Avatar avatar = new Avatar(player, connection);
+        BattleManager.getInstance().addAvatar(avatar);
     }
 }
