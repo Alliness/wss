@@ -28,13 +28,13 @@ class ApiHandler {
 
         try {
             JSONObject body = new JSONObject(request.body());
-            String name = body.getString("name");
+            String     name = body.getString("name");
             if (name == null || Objects.equals(name, "")) {
                 return new JSONObject().put("success", false).put("error", "player name  is invalid");
             }
 
             JSONObject defPlayerJson = FReader.readJSON(new File(Dir.RESOURCES + "/players/default.json"));
-            PlayerDTO player = Serializable.deserialize(defPlayerJson, PlayerDTO.class);
+            PlayerDTO  player        = Serializable.deserialize(defPlayerJson, PlayerDTO.class);
 
 
             player.setName(name);
@@ -56,8 +56,8 @@ class ApiHandler {
     static Object connect(Request request, Response response) {
 
         JSONObject body = new JSONObject(request.body());
-        String uuid = body.getString("uuid");
-        String name = body.getString("name");
+        String     uuid = body.getString("uuid");
+        String     name = body.getString("name");
 
 
         WebSocketConnection.Connection connection = WebSocketConnection.getInstance().getConnection(uuid);
@@ -91,17 +91,26 @@ class ApiHandler {
     public static Object availablePlayers(Request request, Response response) {
         JSONArray players = new JSONArray();
 
-        File dir = new File(Dir.RESOURCES+"/players/available");
-        for (File file : dir.listFiles()) {
-            try{
+        File   dir   = new File(Dir.RESOURCES + "/players/created");
+        File[] files = dir.listFiles();
+
+        if (files == null) {
+            return new JSONObject().put("success", false).put("message", "files not found");
+        }
+        for (File file : files) {
+            try {
                 JSONObject obj = FReader.readJSON(file);
                 assert obj != null;
                 PlayerDTO player = Serializable.deserialize(obj, PlayerDTO.class);
                 players.put(player.serialize());
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 return new JSONObject().put("success", false).put("message", e.getMessage());
             }
         }
         return players;
+    }
+
+    public static Object info(Request request, Response response) {
+        return BattleManager.getInstance().getInfo();
     }
 }

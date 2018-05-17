@@ -18,6 +18,7 @@ public class App {
         WebSocketServer socket = WebSocketServer.getInstance();
         api.run();
         socket.run();
+        world.run();
         instnace = this;
     }
 

@@ -21,7 +21,6 @@ public class GameWorld extends Thread {
     }
 
     private GameWorld() {
-        run();
     }
 
     public void handleMessage(String message) {

@@ -40,7 +40,7 @@ public class BattleManager {
         }
         avatars.add(avatar);
         checkBattleState();
-        avatar.getConnection().sendMessage("battle/connected", battleInfo());
+        avatar.getConnection().sendMessage("battle/connected", getInfo());
     }
 
     private void checkBattleState() {
@@ -82,7 +82,7 @@ public class BattleManager {
         activePlayer = avatars.get(firstTurn);
     }
 
-    private JSONObject battleInfo() {
+    public JSONObject getInfo() {
         JSONArray arr = new JSONArray();
 
         avatars.forEach(avatar -> arr.put(avatar.getPlayer().serialize()));

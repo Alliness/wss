@@ -1,6 +1,7 @@
 package alliness.wss.api;
 
 import alliness.core.ConfigLoader;
+import alliness.core.Dir;
 import alliness.wss.socket.WebSocketConnection;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -22,15 +23,21 @@ public class Api extends Thread {
     public void run() {
 
         port(Integer.parseInt(ConfigLoader.getInstance().getProperty("api.port")));
+
+        externalStaticFileLocation(Dir.PROJECT+ "/site");
+
         before((request, response) -> {
             response.type("application/json;charset=UTF-8");
         });
 
         path("/api", () -> {
+
             path("/socket", () -> {
                 get("/info", (request, response) -> WebSocketConnection.getInstance().getInfo());
             });
+
         });
+
 
         path("/game", () -> {
             path("/player", () -> {
@@ -38,32 +45,21 @@ public class Api extends Thread {
                 post("/connect", ApiHandler::connect);
                 get("/available", ApiHandler::availablePlayers);
             });
-            get("/index", (request, response) -> {
-                //todo index.html(template);
-                System.out.println("/ index ");
-                return "/index";
+
+            path("/battle", () -> {
+
             });
-            path("/page", () -> {
-                get("/form", (request, response) -> {
-                    //todo form.html page
-                    System.out.println("/form");
-                    return "/form";
-                });
-                get("/battle", (request, response) -> {
-                    //todo battle.html page
-                    System.out.println("/battle");
-                    return "/battle";
-                });
-            });
+
+            get("/info", ApiHandler::info);
         });
 
         notFound((request, response) -> {
             response.status(404);
-            response.body(new JSONObject().put("code", 404).put("message", "not found").toString());
+            response.body(new JSONObject().put("success", false).put("error", 404).put("message", "page not found").toString());
             return response.body();
         });
 
-        log.info(String.format("Api Web Server port: %s",port()));
+        log.info(String.format("Api Web Server port: %s", port()));
 
     }
 }
