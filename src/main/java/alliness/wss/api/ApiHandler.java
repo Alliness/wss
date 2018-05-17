@@ -17,11 +17,11 @@ import spark.Response;
 import java.io.File;
 import java.util.Objects;
 
-public class ApiHandler {
+class ApiHandler {
 
     private static final Logger log = Logger.getLogger(ApiHandler.class);
 
-    public static Object newPlayer(Request request, Response response) {
+    static Object newPlayer(Request request, Response response) {
 
         try {
             JSONObject body = new JSONObject(request.body());
@@ -50,7 +50,7 @@ public class ApiHandler {
         }
     }
 
-    public static Object connect(Request request, Response response) {
+    static Object connect(Request request, Response response) {
 
         JSONObject body = new JSONObject(request.body());
         String     uuid = body.getString("uuid");
