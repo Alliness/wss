@@ -114,6 +114,8 @@ public class WebSocketConnection {
         }
 
         public void handleMessage(String message) {
+            if(message.equals("2"))
+                return;
             try {
                 GameWorld.getInstance().handleMessage(message);
                 receivedMesages.add(message);
