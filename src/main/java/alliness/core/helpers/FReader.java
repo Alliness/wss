@@ -17,7 +17,7 @@ public class FReader {
      * @param filePath absolute path to file
      * @return JSONObject
      */
-    public static JSONObject readJSON(String filePath) {
+    public static JSONObject readJSON(String filePath) throws FileNotFoundException {
 
         return readJSON(new File((filePath)));
     }
@@ -27,14 +27,9 @@ public class FReader {
      * @param file File object
      * @return JSONObject
      */
-    public static JSONObject readJSON(File file) {
-        try {
+    public static JSONObject readJSON(File file) throws FileNotFoundException {
             JSONTokener obj = new JSONTokener(new FileReader(file));
             return new JSONObject(obj);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
 

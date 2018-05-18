@@ -24,33 +24,32 @@ public class Api extends Thread {
 
         port(Integer.parseInt(ConfigLoader.getInstance().getProperty("api.port")));
 
-        externalStaticFileLocation(Dir.PROJECT+ "/site");
+        externalStaticFileLocation(Dir.WEB);
 
         before((request, response) -> {
             response.type("application/json;charset=UTF-8");
         });
 
         path("/api", () -> {
-
-            path("/socket", () -> {
-                get("/info", (request, response) -> WebSocketConnection.getInstance().getInfo());
-            });
-
+            get("/info", ApiHandler::info);
         });
 
+        path("/socket", () -> {
+            get("/info", (request, response) -> WebSocketConnection.getInstance().getInfo());
+        });
 
         path("/game", () -> {
             path("/player", () -> {
-                post("/new", ApiHandler::newPlayer);
-                post("/connect", ApiHandler::connect);
-                get("/available", ApiHandler::availablePlayers);
+                post("/new", PlayerHandler::newPlayer);
+                post("/connect", PlayerHandler::connect);
+                get("/available", PlayerHandler::availablePlayers);
+                get("/info/*", PlayerHandler::getInfo);
             });
 
             path("/battle", () -> {
 
             });
 
-            get("/info", ApiHandler::info);
         });
 
         notFound((request, response) -> {
