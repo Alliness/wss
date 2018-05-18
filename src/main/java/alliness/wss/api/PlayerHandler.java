@@ -88,6 +88,19 @@ public class PlayerHandler extends AbstractApiHandler {
 
     }
 
+    public static Object disconnect(Request request, Response response) {
+        JSONObject body = new JSONObject(request.body());
+        String     name = body.getString("name");
+
+        for (Avatar avatar : BattleManager.getInstance().getAvatars()) {
+            if(avatar.getPlayer().getName().equals(name)){
+                avatar.disconnect();
+                return new JSONObject().put("success", true);
+            }
+        }
+        return new JSONObject().put("success", false);
+    }
+
     public static Object availablePlayers(Request request, Response response) {
         JSONArray players = new JSONArray();
 

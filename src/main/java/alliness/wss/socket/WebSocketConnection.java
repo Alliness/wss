@@ -55,6 +55,11 @@ public class WebSocketConnection {
 
     public void remove(Connection connection) {
         connection.stopAlltasks();
+        for (Connection conn : connections) {
+            if(conn.equals(connection)){
+                conn.interrupt();
+            }
+        }
         connections.removeIf(client -> client == connection);
     }
 
@@ -193,6 +198,11 @@ public class WebSocketConnection {
                     .put("fromClient", getReceivedMesages());
 
             return jcon;
+        }
+
+        public void disconnect() {
+            remove(this);
+            session.close();
         }
     }
 

@@ -42,12 +42,13 @@ public class Api extends Thread {
             path("/player", () -> {
                 post("/new", PlayerHandler::newPlayer);
                 post("/connect", PlayerHandler::connect);
+                post("/disconnect", PlayerHandler::disconnect);
                 get("/available", PlayerHandler::availablePlayers);
                 get("/info/*", PlayerHandler::getInfo);
             });
 
             path("/battle", () -> {
-
+                get("/info", BattleHandler::getInfo);
             });
 
         });
