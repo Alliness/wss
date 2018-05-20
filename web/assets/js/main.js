@@ -1,8 +1,11 @@
-var app ={};
+var app = {};
 
 $(document).ready(function () {
 
-    var socket = new Socket("ws://10.65.146.148:9696");
+    var socket = new Socket("ws://localhost:9696");
+    var router = new Router(".container");
+    app.socket = socket;
+    app.router = router;
 
     socket.addHandler("connection/id", function (message) {
         app.socket = {};
@@ -15,9 +18,14 @@ $(document).ready(function () {
         app.player.info = message.player;
     });
 
+    socket.addHandler("battle/state", function (message) {
+        $(".state").text(message.state);
+    });
+
+
     $(".nav-btn").click(function () {
         var that = $(this);
-        $(".container").load(that.attr("data-route"));
+        router.load(that.attr("data-route"));
     });
 
 });

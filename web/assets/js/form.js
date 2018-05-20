@@ -51,7 +51,7 @@ $(document).ready(function () {
             method: "POST",
             success: function (resp) {
                 if(resp.success){
-
+                    app.router.load("battle");
                 }else{
                     //todo handle success=false
                 }

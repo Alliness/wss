@@ -35,7 +35,12 @@ public class PlayerHandler extends AbstractApiHandler {
                 PlayerDTO  player        = Serializable.deserialize(defPlayerJson, PlayerDTO.class);
 
                 player.setName(name);
-                File file = new File(Dir.RESOURCES + "/players/created/" + player.getName() + ".json");
+                File dir = new File(Dir.RESOURCES + "/players/created/");
+
+                if (!dir.exists())
+                    dir.mkdir();
+
+                File file = new File(dir, player.getName() + ".json");
 
                 if (file.exists()) {
                     return jsonFailMessage("player already exist");
@@ -92,13 +97,7 @@ public class PlayerHandler extends AbstractApiHandler {
         JSONObject body = new JSONObject(request.body());
         String     name = body.getString("name");
 
-        for (Avatar avatar : BattleManager.getInstance().getAvatars()) {
-            if(avatar.getPlayer().getName().equals(name)){
-                avatar.disconnect();
-                return new JSONObject().put("success", true);
-            }
-        }
-        return new JSONObject().put("success", false);
+        return BattleManager.getInstance().disconnect(name);
     }
 
     public static Object availablePlayers(Request request, Response response) {
