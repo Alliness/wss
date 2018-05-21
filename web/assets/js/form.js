@@ -1,5 +1,8 @@
 $(document).ready(function () {
 
+
+    getPlayersInfo();
+
     var name = $("#name");
 
     $("#create").click(function () {
@@ -40,8 +43,7 @@ $(document).ready(function () {
             }
         })
     });
-
-
+    
     $("#connect").click(function () {
 
         $.ajax({
@@ -58,6 +60,12 @@ $(document).ready(function () {
             }
         })
 
-    })
+    });
+
+    function getPlayersInfo() {
+        $.get('/game/player/available', function (data) {
+            console.log(data);
+        })
+    }
 
 });
