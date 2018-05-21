@@ -1,4 +1,4 @@
-package alliness.wss.game.player;
+package alliness.wss.game.player.dto;
 
 import alliness.core.Serializable;
 
@@ -10,16 +10,6 @@ public class PlayerDTO extends Serializable{
     private int level;
     private String name;
     private String icon;
-
-
-    public PlayerDTO(double health, double mana, double exp, int level, String name, String icon) {
-        this.health = health;
-        this.mana = mana;
-        this.exp = exp;
-        this.level = level;
-        this.name = name;
-        this.icon = icon;
-    }
 
     public double getHealth() {
         return health;

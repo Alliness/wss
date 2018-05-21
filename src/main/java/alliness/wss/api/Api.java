@@ -46,11 +46,12 @@ public class Api extends Thread {
                 get("/available", PlayerHandler::availablePlayers);
                 get("/info/*", PlayerHandler::getInfo);
             });
-
+            path("/resources", () -> {
+               get("/icons", ResourcesHandler::getIcons);
+            });
             path("/battle", () -> {
                 get("/info", BattleHandler::getInfo);
             });
-
         });
 
         notFound((request, response) -> {

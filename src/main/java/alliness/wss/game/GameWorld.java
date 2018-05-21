@@ -2,7 +2,7 @@ package alliness.wss.game;
 
 import alliness.wss.game.battle.BattleManager;
 import alliness.wss.game.player.Avatar;
-import alliness.wss.game.player.PlayerDTO;
+import alliness.wss.game.player.dto.PlayerDTO;
 import alliness.wss.socket.WebSocketConnection;
 import org.apache.log4j.Logger;
 import org.json.JSONException;

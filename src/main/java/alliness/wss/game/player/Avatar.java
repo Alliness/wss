@@ -1,13 +1,14 @@
 package alliness.wss.game.player;
 
 import alliness.wss.game.battle.BattleManager;
+import alliness.wss.game.player.dto.PlayerDTO;
 import alliness.wss.socket.WebSocketConnection;
 import org.json.JSONObject;
 
 public class Avatar {
 
     private final WebSocketConnection.Connection connection;
-    private       PlayerDTO                      player;
+    private PlayerDTO player;
     private       JSONObject                     info;
 
     public Avatar(PlayerDTO player, WebSocketConnection.Connection connection) {
