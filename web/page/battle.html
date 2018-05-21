@@ -1,36 +1,95 @@
-<h1>Battle</h1>
-<div class="col-md-12">
-    <div class="col-md-6 border row">
-            <div class="col-md-4">
-                <img src="/assets/img/default.svg" alt="" class="img-thumbnail">
-            </div>
-            <div class="col-md-4">
-                <p class="text-uppercase">{name}</p>
-                <p class="text-uppercase">{level}</p>
-            </div>
-            <div class="col-md-4">
-                <div class="progress">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                         aria-valuemax="100"><span class="text-center">xp</span></div>
-                </div>
-                <br>
-                <div class="progress">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                         aria-valuemax="100"></div>
-                </div>
-                <br>
-                <div class="progress">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                         aria-valuemax="100"></div>
-                </div>
-            </div>
-    </div>
-    <!--<div class="player-actions"></div>-->
-    <!--<div class="player enemy">-->
-    <!--<div class="player-info"></div>-->
+<!--<h1>Battle</h1>-->
+<!--<div class="col-md-12">-->
+    <!--<div class="col-md-6 border row">-->
+            <!--<div class="col-md-4">-->
+                <!--<img src="/assets/img/default.svg" alt="" class="img-thumbnail">-->
+            <!--</div>-->
+            <!--<div class="col-md-4">-->
+                <!--<p class="text-uppercase">{name}</p>-->
+                <!--<p class="text-uppercase">{level}</p>-->
+            <!--</div>-->
+            <!--<div class="col-md-4">-->
+                <!--<div class="progress">-->
+                    <!--<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"-->
+                         <!--aria-valuemax="100"><span class="text-center">xp</span></div>-->
+                <!--</div>-->
+                <!--<br>-->
+                <!--<div class="progress">-->
+                    <!--<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"-->
+                         <!--aria-valuemax="100"></div>-->
+                <!--</div>-->
+                <!--<br>-->
+                <!--<div class="progress">-->
+                    <!--<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"-->
+                         <!--aria-valuemax="100"></div>-->
+                <!--</div>-->
+            <!--</div>-->
     <!--</div>-->
-</div>
-<div class="log"></div>
-<div class="chat"></div>
+    <!--&lt;!&ndash;<div class="player-actions"></div>&ndash;&gt;-->
+    <!--&lt;!&ndash;<div class="player enemy">&ndash;&gt;-->
+    <!--&lt;!&ndash;<div class="player-info"></div>&ndash;&gt;-->
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+<!--</div>-->
+<!--<div class="log"></div>-->
+<!--<div class="chat"></div>-->
 
-<script src="/assets/js/battle.js"></script>
+<!--<script src="/assets/js/battle.js"></script>-->
+
+<div class="battle-wrap">
+    <h1 class="battle__caption">BATTLE</h1>
+
+    <div class="battle__field">
+        <div class="battle__user user">
+            <div class="user__img-wrap">
+                <img class="user__img" src="/assets/img/knight2.png" alt="user icon">
+            </div>
+            <div class="user__stat-wrap">
+                <div class="user__stat">
+                    stat
+                </div>
+            </div>
+            <div class="user__attack-wrap">
+                <select name="" id="">
+                    <option value="1">head</option>
+                    <option value="2">top boby</option>
+                    <option value="3">bottom body</option>
+                    <option value="4">foots</option>
+                </select>
+            </div>
+            <div class="user__defence-wrap">
+                <label> head <br>
+                    <input type="checkbox">
+                </label>
+                <label> top boby <br>
+                    <input type="checkbox">
+                </label>
+                <label> bottom body <br>
+                    <input type="checkbox">
+                </label>
+                <label> foots <br>
+                    <input type="checkbox">
+                </label>
+            </div>
+            <div class="user__btn-wrap">
+                <button>hit</button>
+            </div>
+
+        </div>
+        <div class="battle__enemi user">
+            <div class="user__stat-wrap">
+                <div class="user__stat">
+                    stat
+                </div>
+            </div>
+
+            <div class="user__img-wrap">
+                <img class="user__img" src="/assets/img/archer1.png" alt="user icon">
+            </div>
+
+        </div>
+    </div>
+    <div class="battle__logs">
+        <div class="battle__log">log</div>
+        <div class="battle__chat">chat</div>
+    </div>
+</div>
