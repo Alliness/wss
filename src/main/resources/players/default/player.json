@@ -4,5 +4,7 @@
   "exp": 0,
   "level": 1,
   "name": "",
-  "icon": ""
+  "icon": "",
+  "race": "human",
+  "class": "knight"
 }

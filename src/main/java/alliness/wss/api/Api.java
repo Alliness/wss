@@ -48,6 +48,7 @@ public class Api extends Thread {
             });
             path("/resources", () -> {
                get("/icons", ResourcesHandler::getIcons);
+               get("/data", ResourcesHandler::getData);
             });
             path("/battle", () -> {
                 get("/info", BattleHandler::getInfo);

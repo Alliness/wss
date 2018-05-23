@@ -1,3 +1,5 @@
 {
-  "race" : "elf"
+  "race" : "elf",
+  "health": 75,
+  "mana" : 75
 }

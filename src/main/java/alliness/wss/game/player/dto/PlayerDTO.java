@@ -1,15 +1,19 @@
 package alliness.wss.game.player.dto;
 
 import alliness.core.Serializable;
+import com.google.gson.annotations.SerializedName;
 
-public class PlayerDTO extends Serializable{
+public class PlayerDTO extends Serializable {
 
     private double health;
     private double mana;
     private double exp;
-    private int level;
+    private int    level;
     private String name;
     private String icon;
+    private String race;
+    @SerializedName("class")
+    private String playerClass;
 
     public double getHealth() {
         return health;
@@ -57,5 +61,13 @@ public class PlayerDTO extends Serializable{
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public String getRace() {
+        return race;
+    }
+
+    public String getPlayerClass() {
+        return playerClass;
     }
 }

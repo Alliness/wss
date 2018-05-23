@@ -1,3 +1,5 @@
 {
-  "race" : "orc"
+  "race" : "orc",
+  "health" : 125,
+  "mana" : 25
 }

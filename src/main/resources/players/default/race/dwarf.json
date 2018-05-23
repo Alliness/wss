@@ -1,3 +1,5 @@
 {
-  "race" : "dwarf"
+  "race" : "dwarf",
+  "health": 125,
+  "mana": 25
 }
