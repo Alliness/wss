@@ -1,3 +1,4 @@
 {
-  "class" : "knight"
+  "class" : "knight",
+  "icon" : "knight1.png"
 }

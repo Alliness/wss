@@ -43,6 +43,6 @@ public class ResourcesHandler extends ApiHandler {
         }
         data.put("classes", classes)
             .put("races", races);
-        return data;
+        return jsonSuccessMessage(data);
     }
 }

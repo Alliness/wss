@@ -1,3 +1,4 @@
 {
-  "race" : "human"
+  "race" : "human",
+  "icon": "knight1.png"
 }

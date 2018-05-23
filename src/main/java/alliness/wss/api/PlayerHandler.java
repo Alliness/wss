@@ -137,7 +137,7 @@ public class PlayerHandler extends AbstractApiHandler {
                 return jsonFailMessage(e.getMessage());
             }
         }
-        return players;
+        return jsonSuccessMessage(new JSONObject().put("players", players));
     }
 
     public static Object getInfo(Request request, Response response) {

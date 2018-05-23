@@ -1,5 +1,6 @@
 {
-  "race" : "dwarf",
+  "race": "dwarf",
+  "icon": "dwarf1.png",
   "health": 125,
   "mana": 25
 }

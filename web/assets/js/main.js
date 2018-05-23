@@ -22,7 +22,6 @@ $(document).ready(function () {
         $(".state").text(message.state);
     });
 
-
     $(".nav-btn").click(function () {
         var that = $(this);
         router.load(that.attr("data-route"));
