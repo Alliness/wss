@@ -1,6 +1,7 @@
 package alliness.wss.socket;
 
 import alliness.wss.game.GameWorld;
+import alliness.wss.game.battle.BattleManager;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONArray;
@@ -18,12 +19,12 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("all")
 public class WebSocketConnection {
 
-    private static final Logger log = Logger.getLogger(WebSocketConnection.class);
-    private List<Connection> connections = Collections.synchronizedList(new ArrayList<>());
+    private static final Logger           log         = Logger.getLogger(WebSocketConnection.class);
+    private              List<Connection> connections = Collections.synchronizedList(new ArrayList<>());
     private final long startTime;
 
     private static WebSocketConnection instance;
-    private boolean info;
+    private        boolean             info;
 
     public synchronized static WebSocketConnection getInstance() {
         if (instance == null) {
@@ -56,7 +57,7 @@ public class WebSocketConnection {
     public void remove(Connection connection) {
         connection.stopAlltasks();
         for (Connection conn : connections) {
-            if(conn.equals(connection)){
+            if (conn.equals(connection)) {
                 conn.interrupt();
             }
         }
@@ -77,7 +78,9 @@ public class WebSocketConnection {
 
     public Connection getConnection(String uuid) {
 
-        Optional<Connection> res = connections.stream().filter(connection -> connection.getUUID().equals(uuid)).findFirst();
+        Optional<Connection> res = connections.stream()
+                                              .filter(connection -> connection.getUUID().equals(uuid))
+                                              .findFirst();
         if (res.isPresent()) {
             return res.get();
         } else {
@@ -88,22 +91,21 @@ public class WebSocketConnection {
 
     public class Connection extends Thread {
 
-        private String uuid;
+        private String  uuid;
         private Session session;
         private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        private List<ScheduledFuture<?>> tasksLists = Collections.synchronizedList(new ArrayList<>());
-        private List<Runnable> commands = Collections.synchronizedList(new ArrayList<>());
-        private long connectTime;
-        private List<JSONObject> sendedMessages;
-
-        private List<String> receivedMesages;
+        private       List<ScheduledFuture<?>> tasksLists               = Collections.synchronizedList(new ArrayList<>());
+        private       List<Runnable>           commands                 = Collections.synchronizedList(new ArrayList<>());
+        private long                    connectTime;
+        private List<JSONObject>        sendedMessages;
+        private List<OnConnectionClose> onCloseHandlers;
 
         public Connection(Session session) {
             if (!connections.contains(this)) {
                 this.session = session;
+                this.onCloseHandlers = new ArrayList<>();
                 connectTime = System.currentTimeMillis();
                 sendedMessages = new ArrayList<>();
-                receivedMesages = new ArrayList<>();
                 uuid = generateUUID();
                 connections.add(this);
 
@@ -119,11 +121,10 @@ public class WebSocketConnection {
         }
 
         public void handleMessage(String message) {
-            if(message.equals("2"))
+            if (message.equals("2"))
                 return;
             try {
-                GameWorld.getInstance().handleMessage(message);
-                receivedMesages.add(message);
+                MessageHandler.handleMessage(message, this);
             } catch (JSONException ignored) {
             }
         }
@@ -155,7 +156,10 @@ public class WebSocketConnection {
         public ScheduledFuture<?> addTask(Runnable task, int delay) {
 
             log.info(String.format("[WSS-%s] added new Task for Client", session.getRemoteAddress()));
-            ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(task, 0, delay, TimeUnit.MILLISECONDS);
+            ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(task,
+                                                                                              0,
+                                                                                              delay,
+                                                                                              TimeUnit.MILLISECONDS);
             tasksLists.add(scheduledFuture);
             return scheduledFuture;
         }
@@ -185,24 +189,23 @@ public class WebSocketConnection {
             return sendedMessages;
         }
 
-        public List<String> getReceivedMesages() {
-            return receivedMesages;
-        }
-
         public JSONObject getInfo() {
             JSONObject jcon = new JSONObject();
             jcon.put("uuid", getUUID())
-                    .put("connectTime", getConnectTime())
-                    .put("remoteAddress", getSession().getRemoteAddress())
-                    .put("toClient", getSendedMessages())
-                    .put("fromClient", getReceivedMesages());
-
+                .put("connectTime", getConnectTime())
+                .put("remoteAddress", getSession().getRemoteAddress())
+                .put("toClient", getSendedMessages());
             return jcon;
         }
 
         public void disconnect() {
+            onCloseHandlers.forEach(onConnectionClose -> onConnectionClose.onConnectionClosed(this));
             remove(this);
             session.close();
+        }
+
+        public void onConnectionClosed(OnConnectionClose onConnectionClose) {
+            this.onCloseHandlers.add(onConnectionClose);
         }
     }
 

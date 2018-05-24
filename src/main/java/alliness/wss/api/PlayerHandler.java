@@ -93,7 +93,7 @@ public class PlayerHandler extends AbstractApiHandler {
 
             PlayerDTO player = Serializable.deserialize(FReader.readJSON(file), PlayerDTO.class);
 
-            for (Avatar avatar : BattleManager.getInstance().getAvatars()) {
+            for (Avatar avatar : BattleManager.getInstance().getWaitList()) {
                 if (avatar.getPlayer().getName().equals(name)) {
                     return jsonFailMessage(String.format("player %s already selected", name));
                 }
@@ -127,7 +127,7 @@ public class PlayerHandler extends AbstractApiHandler {
                 JSONObject obj    = FReader.readJSON(file);
                 PlayerDTO  player = Serializable.deserialize(obj, PlayerDTO.class);
                 if (BattleManager.getInstance()
-                                 .getAvatars()
+                                 .getWaitList()
                                  .stream()
                                  .noneMatch(avatar -> avatar.getPlayer().getName().equals(player.getName()))
                         ) {

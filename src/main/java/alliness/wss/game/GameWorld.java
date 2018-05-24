@@ -23,17 +23,6 @@ public class GameWorld extends Thread {
     private GameWorld() {
     }
 
-    public void handleMessage(String message) {
-        try {
-            JSONObject obj    = new JSONObject(message);
-            String     action = obj.getString("action");
-            JSONObject body   = obj.getJSONObject("body");
-
-
-        } catch (JSONException e) {
-            log.error("unable to handle message", e);
-        }
-    }
 
     public void createAvatar(PlayerDTO player, WebSocketConnection.Connection connection) throws GameException {
 

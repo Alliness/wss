@@ -8,12 +8,14 @@ import org.json.JSONObject;
 public class Avatar {
 
     private final WebSocketConnection.Connection connection;
-    private PlayerDTO player;
+    private       PlayerDTO                      player;
     private       JSONObject                     info;
 
     public Avatar(PlayerDTO player, WebSocketConnection.Connection connection) {
         this.player = player;
         this.connection = connection;
+
+        this.connection.onConnectionClosed(conn -> disconnect());
     }
 
     public WebSocketConnection.Connection getConnection() {
@@ -42,7 +44,6 @@ public class Avatar {
     }
 
     public void disconnect() {
-        connection.disconnect();
-        BattleManager.getInstance().getAvatars().removeIf(avatar -> avatar.equals(this));
+        BattleManager.getInstance().disconnect(this);
     }
 }

@@ -14,7 +14,7 @@ public class ConnectionHandler {
     @OnWebSocketClose
     public void onClose(int statusCode, String reason) {
         log.info(String.format("[WS]Client(%s)leave: statusCode=%s, reason=%s", connection.getSession().getRemoteAddress(), statusCode, reason));
-        WebSocketConnection.getInstance().remove(connection);
+        connection.disconnect();
         BattleManager.getInstance().disconnect(connection);
     }
 

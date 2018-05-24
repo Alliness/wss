@@ -1,24 +1,26 @@
 package alliness.wss.game.battle;
 
-import alliness.core.utils.RandomUtils;
 import alliness.wss.game.GameException;
 import alliness.wss.game.player.Avatar;
 import alliness.wss.socket.WebSocketConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class BattleManager {
 
-    private        List<Avatar>  avatars;
-    private        Avatar        active;
+    private        List<Avatar>  waitList;
     private static BattleManager instance;
     private        BattleState   state;
 
+    private HashMap<String, BattleRoom> battleRooms;
+
     private BattleManager() {
-        avatars = new LinkedList<>();
+        waitList = new LinkedList<>();
+        battleRooms = new HashMap<>();
         setState(BattleState.PREPARE);
     }
 
@@ -31,34 +33,29 @@ public class BattleManager {
 
     public void addAvatar(Avatar avatar) throws GameException {
 
-        for (Avatar av : avatars) {
+        for (Avatar av : waitList) {
             if (av.getConnection().getUUID().equals(avatar.getConnection().getUUID())) {
-                avatars.forEach(avatar1 -> avatar1.getConnection()
-                                                  .sendMessage("battle/disconnect",
-                                                               new JSONObject().put("error", "duplicate connections")));
-                avatars.clear();
-                checkBattleState();
+                avatar.getConnection().sendMessage("battle/disconnect",
+                                                   new JSONObject().put("error", "duplicate connections"));
+                av.disconnect();
                 throw new GameException("duplicate connections");
             }
         }
-        avatars.add(avatar);
-        avatars.forEach(avatar1 -> avatar1.getConnection().sendMessage("battle/connected", getInfo()));
+        waitList.add(avatar);
+        waitList.forEach(avatar1 -> avatar1.getConnection().sendMessage("battle/connected", getInfo()));
         checkBattleState();
 
     }
 
     private void checkBattleState() {
 
-        switch (avatars.size()) {
-            case 0:
-                setState(BattleState.NOTREADY);
-                break;
+        switch (waitList.size()) {
             case 1:
                 setState(BattleState.PREPARE);
                 break;
             case 2:
                 setState(BattleState.READY);
-                battleBegin();
+                battleBegin(waitList.get(0), waitList.get(1));
                 break;
         }
 
@@ -67,20 +64,20 @@ public class BattleManager {
 
     }
 
-    private void battleBegin() {
-        setFirstTurn();
-        avatars.forEach(avatar -> {
-            avatar.getConnection()
-                  .sendMessage("battle/start",
-                               new JSONObject().put("turn",
-                                                    new JSONObject().put("uuid", active.getConnection().getUUID())
-                                                                    .put("player", active.getPlayer().serialize())));
-        });
-        setState(BattleState.INPROGRESS);
+    private void battleBegin(Avatar avatar, Avatar avatar1) {
+
+        BattleRoom battle = new BattleRoom(avatar, avatar1);
+        //add battle to battleRooms
+        String roomId = battle.getRoomId();
+        battleRooms.put(roomId, battle);
+        //remove avatars from waitList
+        waitList.removeIf(av -> av == avatar);
+        waitList.removeIf(av -> av == avatar1);
+        checkBattleState();
     }
 
-    public List<Avatar> getAvatars() {
-        return avatars;
+    public List<Avatar> getWaitList() {
+        return waitList;
     }
 
     public BattleState getState() {
@@ -88,31 +85,23 @@ public class BattleManager {
     }
 
     public void setState(BattleState state) {
-        if (this.state != state) {
-            this.state = state;
-            avatars.forEach(avatar -> avatar.getConnection()
-                                            .sendMessage("battle/state", new JSONObject().put("state", state)));
-        }
-    }
-
-    private void setFirstTurn() {
-        int firstTurn = RandomUtils.getRandomInt(1, avatars.size());
-        active = avatars.get(firstTurn);
+        this.state = state;
+        waitList.forEach(avatar -> avatar.getConnection()
+                                         .sendMessage("battle/state", new JSONObject().put("state", state)));
     }
 
     public JSONObject getInfo() {
         JSONArray arr = new JSONArray();
 
-        avatars.forEach(avatar -> arr.put(avatar.getPlayer().serialize()));
+        waitList.forEach(avatar -> arr.put(avatar.getPlayer().serialize()));
 
-        return new JSONObject().put("players", arr)
-                               .put("state", state);
+        return new JSONObject().put("players", arr).put("rooms", battleRooms.size());
     }
 
     public boolean disconnect(String name) {
 
         Avatar target = null;
-        for (Avatar avatar : avatars) {
+        for (Avatar avatar : waitList) {
             if (avatar.getPlayer().getName().equals(name)) {
                 target = avatar;
                 avatar.disconnect();
@@ -122,30 +111,31 @@ public class BattleManager {
         return target != null;
     }
 
-    public boolean disconnect(WebSocketConnection.Connection connection) {
-        Avatar target = null;
-        for (Avatar avatar : avatars) {
+    public void disconnect(WebSocketConnection.Connection connection) {
+        for (Avatar avatar : waitList) {
             if (avatar.getConnection().getUUID().equals(connection.getUUID())) {
-                target = avatar;
-                avatar.disconnect();
+                disconnect(avatar);
             }
         }
-        disconnect(target);
-        return target != null;
     }
 
     public void disconnect(Avatar av) {
-        avatars.removeIf(avatar -> avatar.equals(av));
+        waitList.removeIf(avatar -> avatar.equals(av));
 
-        avatars.forEach(avatar -> {
-            avatar.getConnection()
-                  .sendMessage(
-                          "battle/disconnect", new JSONObject()
-                                  .put("name", av.getPlayer().getName())
-                                  .put("uuid", avatar.getConnection().getUUID())
-                  );
-        });
+        waitList.forEach(avatar -> avatar.getConnection()
+                                         .sendMessage(
+                                                 "battle/disconnect",
+                                                 new JSONObject().put("name", av.getPlayer().getName())
+                                                                 .put("uuid", avatar.getConnection().getUUID())
+                                         ));
         checkBattleState();
     }
 
+    public void closeRoom(BattleRoom battleInstance) {
+        battleRooms.remove(battleInstance.getRoomId());
+    }
+
+    public BattleRoom getRoom(String roomId) {
+        return battleRooms.get(roomId);
+    }
 }

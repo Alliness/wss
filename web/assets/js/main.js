@@ -8,7 +8,6 @@ $(document).ready(function () {
     app.router = router;
 
     socket.addHandler("connection/id", function (message) {
-        app.socket = {};
         app.socket.uuid = message.uuid;
     });
 
