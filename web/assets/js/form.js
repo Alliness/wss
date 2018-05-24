@@ -3,28 +3,26 @@ $(document).ready(function () {
     setGameData();
 
     setPlayerInfo();
-    var name = $("#name");
+    var name = $("#name"),
+        playerClass = $("#playerClass"),
+        playerRace = $("#playerRace");
 
-    /**
-     * fixme : now playerClass && playerRace is mandatory params for create new player send them to backend.
-     * fixme : so require to set playerClass and playerRace from app.game.data, add selection view for those params
-     */
     $("#create").click(function () {
 
         $.ajax({
             url: "/game/player/new",
-            data: JSON.stringify({"name": name.val(), "playerClass": "", "playerRace":""}),
+            data: JSON.stringify({"name": name.val(), "playerClass": playerClass.find(":selected").text(), "playerRace": playerRace.find(":selected").text()}),
             dataType: "JSON",
             method: "POST",
             success: function (resp) {
                 //todo handler success state
                 if (resp.success) {
-
+                    setPlayerInfo();
                 } else {
 
                 }
             }
-        })
+        });
     });
 
     /**
@@ -77,8 +75,24 @@ $(document).ready(function () {
             if (data.success) {
                 app.game.data = data;
 
+                setGameOption(data.classes, playerClass);
+                setGameOption(data.races, playerRace);
             }
-        })
+        });
+
+        function setGameOption(data, element) {
+
+            $.each(data, function (k, v) {
+
+                let option = $("<option>");
+
+                option.attr("value", k);
+                option.text(v);
+
+                element.append(option);
+
+            })
+        }
     }
 
     /**
@@ -98,8 +112,8 @@ $(document).ready(function () {
 
                     list.append(
                         "<li class='form__item'>" +
-                        "<button class='js-player-select' attr-player='" + k + "'><img src='/assets/img/" + v.icon + "' alt='" + v.icon + "'></button>" +
-                        "</li>"
+                    "<button class='js-player-select' attr-player='" + k + "'><img src='/assets/img/" + v.icon + "' alt='" + v.icon + "'></button>" +
+                    "</li>" // #TODO JQuery add() ???
                     )
                 });
                 $(".js-player-select").click(listenSelect);
