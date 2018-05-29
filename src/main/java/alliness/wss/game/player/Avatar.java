@@ -11,6 +11,9 @@ public class Avatar {
     private       PlayerDTO                      player;
     private       JSONObject                     info;
 
+    private BodyPartEnum defence;
+    private BodyPartEnum attack;
+
     public Avatar(PlayerDTO player, WebSocketConnection.Connection connection) {
         this.player = player;
         this.connection = connection;
@@ -26,12 +29,6 @@ public class Avatar {
         return player;
     }
 
-    public void setDefence(BodyPartEnum part) {
-    }
-
-    public void setAttack(BodyPartEnum part) {
-    }
-
     private void set() {
     }
 
@@ -45,5 +42,21 @@ public class Avatar {
 
     public void disconnect() {
         BattleManager.getInstance().disconnect(this);
+    }
+
+    public BodyPartEnum getDefence() {
+        return defence;
+    }
+
+    public void setDefence(BodyPartEnum defence) {
+        this.defence = defence;
+    }
+
+    public BodyPartEnum getAttack() {
+        return attack;
+    }
+
+    public void setAttack(BodyPartEnum attack) {
+        this.attack = attack;
     }
 }

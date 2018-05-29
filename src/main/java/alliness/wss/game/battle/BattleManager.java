@@ -135,7 +135,22 @@ public class BattleManager {
         battleRooms.remove(battleInstance.getRoomId());
     }
 
-    public BattleRoom getRoom(String roomId) {
-        return battleRooms.get(roomId);
+    public BattleRoom getRoom(String roomId) throws GameException {
+        try {
+            return battleRooms.get(roomId);
+        } catch (Exception e) {
+            throw new GameException(String.format("unable to get room %s", roomId));
+        }
+    }
+
+
+    public void setAttack(JSONObject data, WebSocketConnection.Connection connection) {
+        try {
+            BattleRoom room = getRoom(data.getString("roomId"));
+            room.collectAttackProcess(data, connection);
+        } catch (GameException e) {
+            connection.sendMessage("battle/error", e.jsonMessage());
+            e.printStackTrace();
+        }
     }
 }

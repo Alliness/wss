@@ -1,8 +1,8 @@
 package alliness.wss.game.battle;
 
-import alliness.core.utils.RandomUtils;
 import alliness.wss.game.GameException;
 import alliness.wss.game.player.Avatar;
+import alliness.wss.game.player.BodyPartEnum;
 import alliness.wss.socket.WebSocketConnection;
 import org.json.JSONObject;
 
@@ -13,42 +13,25 @@ import java.util.UUID;
 public class BattleRoom {
 
 
-    private final String roomId;
-    private       Avatar firstPlayer;
-    private       Avatar secondPlayer;
-
-    private List<Avatar> avatars;
+    private final String       roomId;
+    private       List<Avatar> avatars;
+    private       int          playersReady;
 
     public BattleRoom(Avatar avatarOne, Avatar avatarTwo) {
-        int firstTurn = RandomUtils.getRandomInt(1, 2);
+        playersReady = 0;
         avatars = new ArrayList<>();
         roomId = UUID.randomUUID().toString();
+        avatars.add(avatarOne);
+        avatars.add(avatarTwo);
 
-        switch (firstTurn) {
-            case 1:
-                firstPlayer = avatarOne;
-                secondPlayer = avatarTwo;
-                break;
-            case 2:
-                firstPlayer = avatarTwo;
-                secondPlayer = avatarOne;
-                break;
-        }
-        avatars.add(firstPlayer);
-        avatars.add(secondPlayer);
-
-        JSONObject turn = new JSONObject().put("uuid", firstPlayer.getConnection().getUUID())
-                                          .put("player", firstPlayer.getPlayer().serialize());
-
-        JSONObject data = new JSONObject().put("turn", turn)
-                                          .put("room", roomId);
-
-        avatars.forEach(avatar -> avatar.getConnection().sendMessage("battle/start", data));
 
         avatars.forEach(avatar -> avatar.getConnection().onConnectionClosed(connection -> {
             disconnect(connection);
             collapseBattle();
         }));
+
+        avatarOne.getConnection().sendMessage("battle/start", new JSONObject().put("roomId", roomId).put("enemy", avatarTwo.getPlayer().serialize()));
+        avatarTwo.getConnection().sendMessage("battle/start", new JSONObject().put("roomId", roomId).put("enemy", avatarOne.getPlayer().serialize()));
     }
 
     private void disconnect(WebSocketConnection.Connection connection) {
@@ -72,5 +55,34 @@ public class BattleRoom {
 
     public List<Avatar> getAvatars() {
         return avatars;
+    }
+
+    public Avatar getAvatar(String uuid) throws GameException {
+        for (Avatar avatar : avatars) {
+            if (avatar.getConnection().getUUID().equals(uuid)) {
+                return avatar;
+            }
+        }
+        throw new GameException(String.format("unable to find avatar with uuid :%s", uuid));
+    }
+
+    public void collectAttackProcess(JSONObject data, WebSocketConnection.Connection connection) {
+        try {
+            BodyPartEnum attackPart  = BodyPartEnum.getPart(data.getInt("attack"));
+            BodyPartEnum defencePart = BodyPartEnum.getPart(data.getInt("defence"));
+
+            Avatar av = getAvatar(connection.getUUID());
+            av.setAttack(attackPart);
+            av.setDefence(defencePart);
+            playersReady++;
+            connection.sendMessage("battle/locked", new JSONObject());
+            checkTurnIsReady();
+        } catch (GameException e) {
+            connection.sendMessage("battle/error", e.jsonMessage());
+        }
+    }
+
+    private void checkTurnIsReady() {
+
     }
 }
