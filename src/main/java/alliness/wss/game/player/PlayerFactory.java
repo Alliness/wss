@@ -9,16 +9,18 @@ import java.io.File;
 
 public class PlayerFactory {
 
-    private PlayerDTO       player;
-    private PlayerRaceEnum  playerRace;
+    private Player player;
+    private PlayerDTO dto;
+    private PlayerRaceEnum playerRace;
     private PlayerClassEnum playerClass;
+    private String name;
 
     public PlayerFactory(PlayerDTO dto) {
-        this.player = dto;
+        this.dto = dto;
     }
 
     public PlayerFactory setName(String name) {
-        player.setName(name);
+        this.name = name;
         return this;
     }
 
@@ -32,8 +34,8 @@ public class PlayerFactory {
         return this;
     }
 
-    public PlayerDTO build() {
-        JSONObject object = player.serialize();
+    public Player build() {
+        JSONObject object = dto.serialize();
         for (String s : playerRace.json.keySet()) {
             object.put(s, playerRace.json.get(s));
         }
@@ -42,7 +44,10 @@ public class PlayerFactory {
             object.put(s, playerClass.json.get(s));
         }
 
-        player = Serializable.deserialize(object, PlayerDTO.class);
+        dto = Serializable.deserialize(object, PlayerDTO.class);
+
+        player = new Player(dto);
+        player.setName(name);
         return player;
     }
 

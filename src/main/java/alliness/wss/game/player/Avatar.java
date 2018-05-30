@@ -8,16 +8,14 @@ import org.json.JSONObject;
 public class Avatar {
 
     private final WebSocketConnection.Connection connection;
-    private       PlayerDTO                      player;
-    private       JSONObject                     info;
+    private Player player;
 
     private BodyPartEnum defence;
     private BodyPartEnum attack;
 
-    public Avatar(PlayerDTO player, WebSocketConnection.Connection connection) {
+    public Avatar(Player player, WebSocketConnection.Connection connection) {
         this.player = player;
         this.connection = connection;
-
         this.connection.onConnectionClosed(conn -> disconnect());
     }
 
@@ -25,11 +23,8 @@ public class Avatar {
         return connection;
     }
 
-    public PlayerDTO getPlayer() {
+    public Player getPlayer() {
         return player;
-    }
-
-    private void set() {
     }
 
     public JSONObject getInfo() {
@@ -37,7 +32,7 @@ public class Avatar {
         connectionData.remove("fromClient");
         connectionData.remove("toClient");
         return new JSONObject().put("player", player.serialize())
-                               .put("connection", connectionData);
+                .put("connection", connectionData);
     }
 
     public void disconnect() {
@@ -61,9 +56,9 @@ public class Avatar {
     }
 
     public JSONObject attack(Avatar enemy) {
-        JSONObject obj    = new JSONObject();
-        double     damage = 0;
-        boolean    blocked;
+        JSONObject obj = new JSONObject();
+        double damage = 0;
+        boolean blocked;
         if (getAttack().equals(enemy.getDefence())) {
             blocked = true;
         } else {

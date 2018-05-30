@@ -2,6 +2,7 @@ package alliness.wss.game;
 
 import alliness.wss.game.battle.BattleManager;
 import alliness.wss.game.player.Avatar;
+import alliness.wss.game.player.Player;
 import alliness.wss.game.player.dto.PlayerDTO;
 import alliness.wss.socket.WebSocketConnection;
 import org.apache.log4j.Logger;
@@ -24,7 +25,7 @@ public class GameWorld extends Thread {
     }
 
 
-    public void createAvatar(PlayerDTO player, WebSocketConnection.Connection connection) throws GameException {
+    public void createAvatar(Player player, WebSocketConnection.Connection connection) throws GameException {
 
         Avatar avatar = new Avatar(player, connection);
         BattleManager.getInstance().addAvatar(avatar);

@@ -7,13 +7,10 @@ public class PlayerDTO extends Serializable {
 
     private double maxHealth;
     private double maxMana;
-    private double currentHealth;
-    private double currentMana;
     private double baseAttack;
     private double baseDefence;
     private double exp;
     private int level;
-    private String name;
     private String icon;
     private String race;
     @SerializedName("class")
@@ -51,14 +48,6 @@ public class PlayerDTO extends Serializable {
         this.level = level;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getIcon() {
         return icon;
     }
@@ -81,18 +70,6 @@ public class PlayerDTO extends Serializable {
 
     public double getBaseDefence() {
         return baseDefence;
-    }
-
-    public double getCurrentHealth() {
-        return currentHealth;
-    }
-
-    public double getCurrentMana() {
-        return currentMana;
-    }
-
-    public void setCurrentHealth(double currentHealth) {
-        this.currentHealth = currentHealth;
     }
 
 }

@@ -6,20 +6,23 @@ import alliness.wss.socket.WebSocketConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class BattleManager {
 
-    private        List<Avatar>  waitList;
+    private List<Avatar> waitList;
+    private List<String> onlineList;
     private static BattleManager instance;
-    private        BattleState   state;
+    private BattleState state;
 
     private HashMap<String, BattleRoom> battleRooms;
 
     private BattleManager() {
         waitList = new LinkedList<>();
+        onlineList = new ArrayList<>();
         battleRooms = new HashMap<>();
         setState(BattleState.PREPARE);
     }
@@ -33,6 +36,7 @@ public class BattleManager {
 
     /**
      * add new {@link Avatar} to battle lobby(waitList)
+     *
      * @param avatar {@link Avatar}
      * @throws GameException {@link GameException}
      */
@@ -41,12 +45,13 @@ public class BattleManager {
         for (Avatar av : waitList) {
             if (av.getConnection().getUUID().equals(avatar.getConnection().getUUID())) {
                 avatar.getConnection().sendMessage("battle/disconnect",
-                                                   new JSONObject().put("error", "duplicate connections"));
+                        new JSONObject().put("error", "duplicate connections"));
                 av.disconnect();
                 throw new GameException("duplicate connections");
             }
         }
         waitList.add(avatar);
+        onlineList.add(avatar.getPlayer().getName());
         waitList.forEach(avatar1 -> avatar1.getConnection().sendMessage("battle/connected", getInfo()));
         checkBattleState();
 
@@ -72,10 +77,10 @@ public class BattleManager {
 
     /**
      * Create battle room {@link BattleRoom} instance for two avatars
-     * @param avatar {@link Avatar} player 1
-     * @param avatar1 {@link Avatar} player 2
-     * Those players moved from waitList to battleRoom
      *
+     * @param avatar  {@link Avatar} player 1
+     * @param avatar1 {@link Avatar} player 2
+     *                Those players moved from waitList to battleRoom
      */
     private void battleBegin(Avatar avatar, Avatar avatar1) {
 
@@ -100,7 +105,7 @@ public class BattleManager {
     public void setState(BattleState state) {
         this.state = state;
         waitList.forEach(avatar -> avatar.getConnection()
-                                         .sendMessage("battle/state", new JSONObject().put("state", state)));
+                .sendMessage("battle/state", new JSONObject().put("state", state)));
     }
 
     public JSONObject getInfo() {
@@ -109,6 +114,14 @@ public class BattleManager {
         waitList.forEach(avatar -> arr.put(avatar.getPlayer().serialize()));
 
         return new JSONObject().put("players", arr).put("rooms", battleRooms.size());
+    }
+
+    public List<String> getOnlineList() {
+        return onlineList;
+    }
+
+    public HashMap<String, BattleRoom> getBattleRooms() {
+        return battleRooms;
     }
 
     public boolean disconnect(String name) {
@@ -134,13 +147,13 @@ public class BattleManager {
 
     public void disconnect(Avatar av) {
         waitList.removeIf(avatar -> avatar.equals(av));
-
+        onlineList.removeIf(avatar -> avatar.equals(av.getPlayer().getName()));
         waitList.forEach(avatar -> avatar.getConnection()
-                                         .sendMessage(
-                                                 "battle/disconnect",
-                                                 new JSONObject().put("name", av.getPlayer().getName())
-                                                                 .put("uuid", avatar.getConnection().getUUID())
-                                         ));
+                .sendMessage(
+                        "battle/disconnect",
+                        new JSONObject().put("name", av.getPlayer().getName())
+                                .put("uuid", avatar.getConnection().getUUID())
+                ));
         checkBattleState();
     }
 
@@ -165,5 +178,9 @@ public class BattleManager {
             connection.sendMessage("battle/error", e.jsonMessage());
             e.printStackTrace();
         }
+    }
+
+    public boolean isOnline(String name) {
+        return onlineList.contains(name);
     }
 }
