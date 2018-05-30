@@ -13,9 +13,9 @@ import java.util.UUID;
 public class BattleRoom {
 
 
-    private final String roomId;
-    private List<Avatar> avatars;
-    private int playersReady;
+    private final String       roomId;
+    private       List<Avatar> avatars;
+    private       int          playersReady;
 
     public BattleRoom(Avatar avatarOne, Avatar avatarTwo) {
         playersReady = 0;
@@ -23,10 +23,9 @@ public class BattleRoom {
         roomId = UUID.randomUUID().toString();
         avatars.add(avatarOne);
         avatars.add(avatarTwo);
-
-
         avatars.forEach(avatar -> avatar.getConnection().onConnectionClosed(connection -> {
             disconnect(connection);
+            avatar.setLocked(false);
             collapseBattle();
         }));
 
@@ -74,13 +73,18 @@ public class BattleRoom {
      */
     public void collectAttackProcess(JSONObject data, WebSocketConnection.Connection connection) {
         try {
-            BodyPartEnum attackPart = BodyPartEnum.getPart(data.getInt("attack"));
+            BodyPartEnum attackPart  = BodyPartEnum.getPart(data.getInt("attack"));
             BodyPartEnum defencePart = BodyPartEnum.getPart(data.getInt("defence"));
 
             Avatar av = getAvatar(connection.getUUID());
+            if (av.isLocked()) {
+                connection.sendMessage("battle/error", new JSONObject().put("message", "player locked"));
+                return;
+            }
             av.setAttack(attackPart);
             av.setDefence(defencePart);
             playersReady++;
+            av.setLocked(true);
             connection.sendMessage("battle/locked", new JSONObject());
             checkTurnIsReady();
         } catch (GameException e) {
@@ -90,20 +94,36 @@ public class BattleRoom {
 
     private void checkTurnIsReady() {
         if (playersReady == 2 && avatars.size() == 2) {
-            calculateBattle(avatars.get(0), avatars.get(1));
-            calculateBattle(avatars.get(1), avatars.get(0));
-            playersReady = 0;
+            JSONObject av0 = attackProcess(avatars.get(0), avatars.get(1));
+            JSONObject av1 = attackProcess(avatars.get(1), avatars.get(0));
+            calculateAttack(av0, av1, avatars.get(0), avatars.get(1));
+            calculateAttack(av1, av0, avatars.get(1), avatars.get(0));
+            unlockPlayers();
         }
     }
 
-    private void calculateBattle(Avatar player, Avatar enemy) {
-        JSONObject data = player.attack(enemy);
-        JSONObject deal = new JSONObject();
-        JSONObject taken = new JSONObject();
+    private void calculateAttack(JSONObject deal, JSONObject taken, Avatar player, Avatar enemy) {
 
-        deal.put("deal", data);
-        taken.put("taken", data);
-        player.getConnection().sendMessage("battle/turn", deal);
-        enemy.getConnection().sendMessage("battle/turn", taken);
+        JSONObject data = new JSONObject();
+        data.put("deal", deal)
+            .put("taken", taken)
+            .put("player", player.getPlayer().serialize())
+            .put("enemy", enemy.getPlayer().serialize());
+
+        player.getConnection().sendMessage("battle/turn", data);
+
     }
+
+    private JSONObject attackProcess(Avatar player, Avatar enemy) {
+        return player.attack(enemy);
+    }
+
+    private void unlockPlayers() {
+        playersReady = 0;
+        avatars.forEach(avatar -> {
+            avatar.setLocked(false);
+            avatar.getConnection().sendMessage("battle/unlock", new JSONObject());
+        });
+    }
+
 }
