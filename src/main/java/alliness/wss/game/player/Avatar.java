@@ -73,11 +73,13 @@ public class Avatar {
         }
         obj.put("blocked", blocked);
         obj.put("damage", damage);
+        setAttack(null);
         return obj;
     }
 
     private void takeDamage(double damage) {
         player.setCurrentHealth(player.getCurrentHealth() - damage);
+        setDefence(null);
     }
 
 }

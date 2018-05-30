@@ -13,9 +13,9 @@ import java.util.UUID;
 public class BattleRoom {
 
 
-    private final String       roomId;
-    private       List<Avatar> avatars;
-    private       int          playersReady;
+    private final String roomId;
+    private List<Avatar> avatars;
+    private int playersReady;
 
     public BattleRoom(Avatar avatarOne, Avatar avatarTwo) {
         playersReady = 0;
@@ -66,9 +66,15 @@ public class BattleRoom {
         throw new GameException(String.format("unable to find avatar with uuid :%s", uuid));
     }
 
+    /**
+     * Handler for player attack politics (setter for player attack and defence)
+     *
+     * @param data       {@link JSONObject}
+     * @param connection {@link alliness.wss.socket.WebSocketConnection.Connection}
+     */
     public void collectAttackProcess(JSONObject data, WebSocketConnection.Connection connection) {
         try {
-            BodyPartEnum attackPart  = BodyPartEnum.getPart(data.getInt("attack"));
+            BodyPartEnum attackPart = BodyPartEnum.getPart(data.getInt("attack"));
             BodyPartEnum defencePart = BodyPartEnum.getPart(data.getInt("defence"));
 
             Avatar av = getAvatar(connection.getUUID());
@@ -86,13 +92,13 @@ public class BattleRoom {
         if (playersReady == 2 && avatars.size() == 2) {
             calculateBattle(avatars.get(0), avatars.get(1));
             calculateBattle(avatars.get(1), avatars.get(0));
-            //flush counter
+            playersReady = 0;
         }
     }
 
     private void calculateBattle(Avatar player, Avatar enemy) {
-        JSONObject data  = player.attack(enemy);
-        JSONObject deal  = new JSONObject();
+        JSONObject data = player.attack(enemy);
+        JSONObject deal = new JSONObject();
         JSONObject taken = new JSONObject();
 
         deal.put("deal", data);

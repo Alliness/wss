@@ -31,6 +31,11 @@ public class BattleManager {
         return instance;
     }
 
+    /**
+     * add new {@link Avatar} to battle lobby(waitList)
+     * @param avatar {@link Avatar}
+     * @throws GameException {@link GameException}
+     */
     public void addAvatar(Avatar avatar) throws GameException {
 
         for (Avatar av : waitList) {
@@ -47,6 +52,11 @@ public class BattleManager {
 
     }
 
+    /**
+     * check battle ready
+     * if players in waitList 1 - battle state set as PREPARE
+     * if players in waitList 2 - battle state set as READY battle room will be created
+     */
     private void checkBattleState() {
 
         switch (waitList.size()) {
@@ -58,12 +68,15 @@ public class BattleManager {
                 battleBegin(waitList.get(0), waitList.get(1));
                 break;
         }
-
-        // how many players in manager
-        //set state and send message
-
     }
 
+    /**
+     * Create battle room {@link BattleRoom} instance for two avatars
+     * @param avatar {@link Avatar} player 1
+     * @param avatar1 {@link Avatar} player 2
+     * Those players moved from waitList to battleRoom
+     *
+     */
     private void battleBegin(Avatar avatar, Avatar avatar1) {
 
         BattleRoom battle = new BattleRoom(avatar, avatar1);

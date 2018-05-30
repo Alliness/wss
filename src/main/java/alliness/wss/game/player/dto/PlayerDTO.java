@@ -12,7 +12,7 @@ public class PlayerDTO extends Serializable {
     private double baseAttack;
     private double baseDefence;
     private double exp;
-    private int    level;
+    private int level;
     private String name;
     private String icon;
     private String race;
@@ -94,4 +94,5 @@ public class PlayerDTO extends Serializable {
     public void setCurrentHealth(double currentHealth) {
         this.currentHealth = currentHealth;
     }
+
 }
