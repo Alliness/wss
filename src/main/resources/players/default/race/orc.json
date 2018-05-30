@@ -1,6 +1,6 @@
 {
   "race" : "orc",
   "icon" : "orc1.png",
-  "health" : 125,
-  "mana" : 25
+  "maxHealth" : 125,
+  "maxMana" : 25
 }

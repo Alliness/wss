@@ -83,6 +83,21 @@ public class BattleRoom {
     }
 
     private void checkTurnIsReady() {
+        if (playersReady == 2 && avatars.size() == 2) {
+            calculateBattle(avatars.get(0), avatars.get(1));
+            calculateBattle(avatars.get(1), avatars.get(0));
+            //flush counter
+        }
+    }
 
+    private void calculateBattle(Avatar player, Avatar enemy) {
+        JSONObject data  = player.attack(enemy);
+        JSONObject deal  = new JSONObject();
+        JSONObject taken = new JSONObject();
+
+        deal.put("deal", data);
+        taken.put("taken", data);
+        player.getConnection().sendMessage("battle/turn", deal);
+        enemy.getConnection().sendMessage("battle/turn", taken);
     }
 }

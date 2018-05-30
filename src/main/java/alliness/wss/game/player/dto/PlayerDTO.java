@@ -5,8 +5,12 @@ import com.google.gson.annotations.SerializedName;
 
 public class PlayerDTO extends Serializable {
 
-    private double health;
-    private double mana;
+    private double maxHealth;
+    private double maxMana;
+    private double currentHealth;
+    private double currentMana;
+    private double baseAttack;
+    private double baseDefence;
     private double exp;
     private int    level;
     private String name;
@@ -15,20 +19,20 @@ public class PlayerDTO extends Serializable {
     @SerializedName("class")
     private String playerClass;
 
-    public double getHealth() {
-        return health;
+    public double getMaxHealth() {
+        return maxHealth;
     }
 
-    public void setHealth(double health) {
-        this.health = health;
+    public void setMaxHealth(double maxHealth) {
+        this.maxHealth = maxHealth;
     }
 
-    public double getMana() {
-        return mana;
+    public double getMaxMana() {
+        return maxMana;
     }
 
-    public void setMana(double mana) {
-        this.mana = mana;
+    public void setMaxMana(double maxMana) {
+        this.maxMana = maxMana;
     }
 
     public double getExp() {
@@ -69,5 +73,25 @@ public class PlayerDTO extends Serializable {
 
     public String getPlayerClass() {
         return playerClass;
+    }
+
+    public double getBaseAttack() {
+        return baseAttack;
+    }
+
+    public double getBaseDefence() {
+        return baseDefence;
+    }
+
+    public double getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public double getCurrentMana() {
+        return currentMana;
+    }
+
+    public void setCurrentHealth(double currentHealth) {
+        this.currentHealth = currentHealth;
     }
 }

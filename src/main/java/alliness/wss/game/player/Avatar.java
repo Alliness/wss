@@ -59,4 +59,25 @@ public class Avatar {
     public void setAttack(BodyPartEnum attack) {
         this.attack = attack;
     }
+
+    public JSONObject attack(Avatar enemy) {
+        JSONObject obj    = new JSONObject();
+        double     damage = 0;
+        boolean    blocked;
+        if (getAttack().equals(enemy.getDefence())) {
+            blocked = true;
+        } else {
+            blocked = false;
+            damage = getPlayer().getBaseAttack() - enemy.getPlayer().getBaseDefence();
+            enemy.takeDamage(damage);
+        }
+        obj.put("blocked", blocked);
+        obj.put("damage", damage);
+        return obj;
+    }
+
+    private void takeDamage(double damage) {
+        player.setCurrentHealth(player.getCurrentHealth() - damage);
+    }
+
 }
