@@ -44,10 +44,9 @@ public class PlayerFactory {
             object.put(s, playerClass.json.get(s));
         }
 
-        dto = Serializable.deserialize(object, PlayerDTO.class);
-
-        player = new Player(dto);
+        player = Serializable.deserialize(object, Player.class);
         player.setName(name);
+        player.setMaxStats();
         return player;
     }
 

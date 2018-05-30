@@ -113,7 +113,7 @@ public class BattleManager {
 
         waitList.forEach(avatar -> arr.put(avatar.getPlayer().serialize()));
 
-        return new JSONObject().put("players", arr).put("rooms", battleRooms.size());
+        return new JSONObject().put("waitList", arr).put("rooms", battleRooms.size()).put("online", onlineList);
     }
 
     public List<String> getOnlineList() {

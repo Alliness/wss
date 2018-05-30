@@ -8,11 +8,6 @@ public class Player extends PlayerDTO {
     private double currentMana;
     private String name;
 
-    public Player(PlayerDTO dto) {
-        currentHealth = dto.getMaxHealth();
-        currentMana = dto.getMaxMana();
-    }
-
     public void setCurrentMana(double currentMana) {
         this.currentMana = currentMana;
         if(this.currentMana < 0)
@@ -50,5 +45,10 @@ public class Player extends PlayerDTO {
         {
             this.currentHealth = getMaxHealth();
         }
+    }
+
+    public void setMaxStats() {
+        this.currentHealth = getMaxHealth();
+        this.currentMana = getMaxMana();
     }
 }
