@@ -1,54 +1,30 @@
-<h1 class="form-caption">FORM</h1>
+<h1 class="form-caption">create your player or choose someone from now living</h1>
 <div class="form-wrap">
 
     <div class="form">
+        <div class="form__create">
+            <label class="form__label"> create your player <br>
+                <input id="name" type="text">
+            </label>
 
-        <label class="form__input"> create your player <br>
-            <input id="name" type="text">
-        </label>
+            <label class="form__label">playerRace <br>
+                <select name="playerRace" id="playerRace"></select>
+            </label>
 
-        <div class="sel-wrap">
-            <select name="" id="playerClass"></select>
-            <select name="" id="playerRace"></select>
+            <label class="form__label">playerClass <br>
+                <select id="playerClass"></select>
+            </label>
         </div>
+        <!--/END form__create-->
 
         <div class="form__list-wrap">
             <ul class="form__list">
                 <!--<li class="form__item">-->
+                    <!--<div class="pl">-->
+                        <!--<div class="pl-name">wfwefewfewf</div>-->
+                        <!--<div class="pl-lvl">L 1</div>-->
+                    <!--</div>-->
                     <!--<button><img src="/assets/img/archer1.png" alt="archer1.png"></button>-->
-                <!--</li>-->
-                <!--<li class="form__item">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
-                <!--</li>-->
-                <!--<li class="form__item form__item-is-active">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
-                <!--</li>-->
-                <!--<li class="form__item">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
-                <!--</li>-->
-                <!--<li class="form__item">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
-                <!--</li>-->
-                <!--<li class="form__item">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
-                <!--</li>-->
-                <!--<li class="form__item">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
-                <!--</li>-->
-                <!--<li class="form__item">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
-                <!--</li>-->
-                <!--<li class="form__item">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
-                <!--</li>-->
-                <!--<li class="form__item">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
-                <!--</li>-->
-                <!--<li class="form__item">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
-                <!--</li>-->
-                <!--<li class="form__item">-->
-                    <!--<img src="/assets/img/archer1.png" alt="archer1.png">-->
                 <!--</li>-->
             </ul>
         </div>
@@ -66,13 +42,52 @@
     <div class="form__info">
         <h2>info</h2>
         <div class="form__info-inner">
-            <pre class="js-player-info"></pre>
+            <!--<pre class="js-player-info"></pre>-->
+
+            <div class="tabs-block">
+                <div class="tabs-container">
+                    <button onclick="showPanel(0, 'red')">tab 1</button>
+                    <button onclick="showPanel(1, 'orange')">tab 2</button>
+                    <button onclick="showPanel(2, 'green')">tab 3</button>
+                    <button onclick="showPanel(3, 'blue')">tab 4</button>
+                </div>
+                <div class="tab-panel">
+                    <div class="tab-panel__player-info">
+                        
+                    </div>
+                </div>
+                <div class="tab-panel">tab 2 content</div>
+                <div class="tab-panel">tab 3 content</div>
+                <div class="tab-panel">tab 4 content</div>
+            </div>
         </div>
     </div>
     <!--/END form__info-->
-
 
 </div>
 <!--/END form-wrap-->
 
 <script src="/assets/js/form.js"></script>
+
+<script>
+    //===== NEED FOR TAB PANEL ======
+    let tabBtn = document.querySelectorAll('.tabs-block button');
+    let tabPanel = document.querySelectorAll('.tabs-block .tab-panel');
+
+    function showPanel(panelIndex, colorCode) {
+        tabBtn.forEach(function (node) {
+            node.style.backgroundColor = "";
+            node.style.color = "";
+        });
+        tabBtn[panelIndex].style.backgroundColor = colorCode;
+        tabBtn[panelIndex].style.color = 'white';
+
+        tabPanel.forEach(function (node) {
+            node.style.display = "none";
+        });
+        tabPanel[panelIndex].style.display = 'block';
+        tabPanel[panelIndex].style.backgroundColor = colorCode;
+    }
+
+    showPanel(0, 'red');
+</script>

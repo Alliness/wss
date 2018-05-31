@@ -11,7 +11,11 @@ $(document).ready(function () {
 
         $.ajax({
             url: "/game/player/new",
-            data: JSON.stringify({"name": name.val(), "playerClass": playerClass.find(":selected").text(), "playerRace": playerRace.find(":selected").text()}),
+            data: JSON.stringify({
+                "name": name.val(),
+                "playerClass": playerClass.find(":selected").text(),
+                "playerRace": playerRace.find(":selected").text()
+            }),
             dataType: "JSON",
             method: "POST",
             success: function (resp) {
@@ -110,14 +114,39 @@ $(document).ready(function () {
                 list.empty();
                 $.each(data.players, function (k, v) {
 
-                    list.append(
-                        "<li class='form__item'>" +
-                    "<button class='js-player-select' attr-player='" + k + "'><img src='/assets/img/" + v.icon + "' alt='" + v.icon + "'></button>" +
-                    "</li>" // #TODO JQuery add() ???
-                    )
+                    let li = $('<li>');
+                    let divList =  $('<div>');
+                    let divName =  $('<div>');
+                    let divLvl =  $('<div>');
+                    let button = $('<button>');
+                    let img = $("<img>");
+
+                    li.addClass('form__item');
+
+                    divList.addClass('pl');
+                    divName.addClass('pl-name').text(v.name);
+                    divLvl.addClass('pl-lvl').text(v.level);
+
+                    img.attr({
+                        src: '/assets/img/' + v.icon,
+                        alt: ' '
+                    });
+
+                    button.addClass('js-player-select');
+                    button.attr("player-order", k);
+
+                    divList.append(divName).append(divLvl);
+                    button.append(img);
+
+                    li.append(divList).append(button);
+                    list.append(li)
+
                 });
-                $(".js-player-select").click(listenSelect);
+
+                $(".js-player-select").on("click", listenSelect);
+
             }
+
         });
     }
 
@@ -127,12 +156,11 @@ $(document).ready(function () {
      * shown selected player json data.
      */
     function listenSelect() {
-        var that = $(this);
-        var order = parseInt(that.attr("attr-player"));
+        let that = $(this);
+        let order = parseInt(that.attr("player-order"));
 
-        var selectedPlayer = app.game.availablePlayers[order];
+        let selectedPlayer = app.game.availablePlayers[order];
         console.log(selectedPlayer)
     }
-
 
 });
