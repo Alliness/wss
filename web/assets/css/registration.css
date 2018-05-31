@@ -1,0 +1,244 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #c1c1c1;
+}
+
+/*====== STYLE FOR CREATE PAGE (FORM PAGE) ======*/
+.form-caption {
+    text-align: center;
+    font-size: 24px;
+    text-transform: uppercase;
+
+    width: 100%;
+    border-bottom: 2px solid #242424;
+    padding-bottom: 1rem;
+}
+
+.form-wrap {
+    border: 2px solid #242424;
+    border-top: none;
+    margin-top: 1rem;
+    min-height: 450px;
+    align-items: stretch;
+}
+.form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.form__info-inner {
+    width: 100%;
+    height: 100%;
+}
+
+.form__create {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form__label {
+    display: block;
+    width: 30%;
+    margin: 0 auto 1rem;
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 18px;
+}
+.form__label input,
+.form__label select {
+    width: 100%;
+}
+.form__list-wrap {
+    margin-bottom: .5rem;
+    flex: 1;
+}
+.form__list {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    max-height: 320px;
+}
+.form__list::-webkit-scrollbar {
+    width: 10px;
+}
+.form__list::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+    background: rgba(0,0,255, .1 );
+}
+.form__item {
+    position: relative;
+}
+
+.pl {
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.pl-name {
+    width: 75%;
+    padding: 0 .5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.pl-lvl {
+    width: 25%;
+    text-align: center;
+}
+/*======/END STYLE FOR CREATE PAGE (FORM PAGE) ======*/
+
+/*====== STYLE FOR TABS ======*/
+.tabs-block {
+    width: 100%;
+    height: 100%;
+}
+
+.tabs-container {
+    height: 15%;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.tabs-container button {
+    width: 25%;
+    height: 100%;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 18px;
+    background-color: #eee;
+
+}
+
+.tabs-container button:hover {
+    background-color: #d7d4d4;
+}
+
+.tab-panel {
+    height: 85%;
+    background: gray;
+    color: #fff;
+    text-align: center;
+    padding-top: 105px;
+    font-size: 22px;
+    display: none;
+    transition: all 1s ease-in-out;
+}
+/*======/END STYLE FOR TABS ======*/
+
+/*===== CHAT ======*/
+.chat-box {
+    width: 500px;
+    min-width: 390px;
+    height: 600px;
+    background-color: #fff;
+
+    padding: 1.5rem;
+    margin: 1rem auto;
+    box-shadow: 0 3px #ccc;
+
+}
+.chat-logs {
+    padding: 10px;
+    width: 100%;
+    height: 450px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.chat-logs::-webkit-scrollbar {
+    width: 10px;
+}
+.chat-logs::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+    background: rgba(0,0,0, .1 );
+}
+.chat {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.chat .user-photo {
+    width: 60px;
+    height: 60px;
+    background-color: #ccc;
+    border-radius: 50%;
+}
+.chat .chat-massage {
+    width: 80%;
+    padding: 15px;
+    margin: 5px 10px 0;
+    background: #1ddced;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 20px;
+}
+.friend .chat-massage {
+    background: #1adda4;
+}
+.self .chat-massage {
+    background: #1ddced;
+    order: -1;
+}
+
+.chat-form {
+    margin-top: 20px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.chat-form textarea {
+    background-color: #fbfbfb;
+    width: 75%;
+    height: 50px;
+    border: 2px solid #eee;
+    border-radius: 3px;
+    resize: none;
+    padding: 10px;
+    font-size: 18px;
+    color: #333;
+
+}
+.chat-form textarea:focus {
+    background-color: #fff;
+}
+
+.chat-form textarea::-webkit-scrollbar {
+    width: 10px;
+}
+
+.chat-form textarea::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+    background: rgba(0,0,0, .1 );
+}
+
+.chat-form button {
+    background-color: #1ddced;
+    padding: 5px 15px;
+    font-size: 30px;
+    color: #fff;
+    border: none;
+    margin: 0 10px;
+    border-radius: 3px;
+    box-shadow: 0 3px 0 #0eb2c1;
+    cursor: pointer;
+
+    transition: background-color .2s ease;
+}
+.chat-form button:hover{
+    background-color: #13c8d9;
+}
