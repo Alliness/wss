@@ -158,8 +158,8 @@ $(document).ready(function () {
     function listenSelect() {
         let that = $(this);
         let order = parseInt(that.attr("player-order"));
-
         let selectedPlayer = app.game.availablePlayers[order];
+        name.val(selectedPlayer.name)
         console.log(selectedPlayer)
     }
 
