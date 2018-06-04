@@ -98,8 +98,23 @@ public class BattleRoom {
             JSONObject av1 = attackProcess(avatars.get(1), avatars.get(0));
             calculateAttack(av0, av1, avatars.get(0), avatars.get(1));
             calculateAttack(av1, av0, avatars.get(1), avatars.get(0));
+            healthCheckPlayers();
             unlockPlayers();
         }
+    }
+
+    private void healthCheckPlayers() {
+        avatars.forEach(avatar -> {
+            if(avatar.getPlayer().getCurrentHealth() == 0)
+            {
+               avatars.forEach(target -> {
+                   JSONObject data =new JSONObject();
+                   data.put("defeated", avatar.getPlayer());
+                   target.getConnection().sendMessage("battle/end", data);
+               });
+               collapseBattle();
+            }
+        });
     }
 
     private void calculateAttack(JSONObject deal, JSONObject taken, Avatar player, Avatar enemy) {
