@@ -2,6 +2,9 @@ package alliness.wss.game.player;
 
 import alliness.wss.game.GameException;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum BodyPartEnum {
 
     HEAD(1),
@@ -21,5 +24,9 @@ public enum BodyPartEnum {
             }
         }
         throw new GameException(String.format("unable to get body part with number %s", part));
+    }
+
+    public static List<BodyPartEnum> list() {
+        return Arrays.asList(BodyPartEnum.values());
     }
 }

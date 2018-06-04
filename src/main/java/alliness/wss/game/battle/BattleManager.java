@@ -2,6 +2,7 @@ package alliness.wss.game.battle;
 
 import alliness.wss.game.GameException;
 import alliness.wss.game.player.Avatar;
+import alliness.wss.game.player.BodyPartEnum;
 import alliness.wss.socket.WebSocketConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,10 +14,10 @@ import java.util.List;
 
 public class BattleManager {
 
-    private List<Avatar> waitList;
-    private List<String> onlineList;
+    private        List<Avatar>  waitList;
+    private        List<String>  onlineList;
     private static BattleManager instance;
-    private BattleState state;
+    private        BattleState   state;
 
     private HashMap<String, BattleRoom> battleRooms;
 
@@ -45,16 +46,30 @@ public class BattleManager {
         for (Avatar av : waitList) {
             if (av.getConnection().getUUID().equals(avatar.getConnection().getUUID())) {
                 avatar.getConnection().sendMessage("battle/disconnect",
-                        new JSONObject().put("error", "duplicate connections"));
+                                                   new JSONObject().put("error", "duplicate connections"));
                 av.disconnect();
                 throw new GameException("duplicate connections");
             }
         }
         waitList.add(avatar);
         onlineList.add(avatar.getPlayer().getName());
+
+        battleInitFor(avatar);
         waitList.forEach(avatar1 -> avatar1.getConnection().sendMessage("battle/connected", getInfo()));
         checkBattleState();
+    }
 
+    private void battleInitFor(Avatar avatar) {
+        JSONObject data = new JSONObject();
+        JSONArray  body = new JSONArray();
+
+        for (BodyPartEnum bodyPartEnum : BodyPartEnum.list()) {
+            body.put(bodyPartEnum);
+        }
+
+        data.put("body", body);
+        data.put("player", avatar.getPlayer().serialize());
+        avatar.getConnection().sendMessage("battle/init", data);
     }
 
     /**
@@ -105,7 +120,7 @@ public class BattleManager {
     public void setState(BattleState state) {
         this.state = state;
         waitList.forEach(avatar -> avatar.getConnection()
-                .sendMessage("battle/state", new JSONObject().put("state", state)));
+                                         .sendMessage("battle/state", new JSONObject().put("state", state)));
     }
 
     public JSONObject getInfo() {
@@ -149,11 +164,11 @@ public class BattleManager {
         waitList.removeIf(avatar -> avatar.equals(av));
         onlineList.removeIf(avatar -> avatar.equals(av.getPlayer().getName()));
         waitList.forEach(avatar -> avatar.getConnection()
-                .sendMessage(
-                        "battle/disconnect",
-                        new JSONObject().put("name", av.getPlayer().getName())
-                                .put("uuid", avatar.getConnection().getUUID())
-                ));
+                                         .sendMessage(
+                                                 "battle/disconnect",
+                                                 new JSONObject().put("name", av.getPlayer().getName())
+                                                                 .put("uuid", avatar.getConnection().getUUID())
+                                         ));
         checkBattleState();
     }
 

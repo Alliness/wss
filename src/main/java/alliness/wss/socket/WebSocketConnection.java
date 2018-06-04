@@ -1,7 +1,5 @@
 package alliness.wss.socket;
 
-import alliness.wss.game.GameWorld;
-import alliness.wss.game.battle.BattleManager;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONArray;

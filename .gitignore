@@ -3,4 +3,5 @@ logs/
 .git/
 target/
 node_modules/
+src/main/resources/players/created/
 
