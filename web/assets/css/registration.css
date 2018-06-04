@@ -131,7 +131,7 @@ body{
     background: gray;
     color: #fff;
     text-align: center;
-    padding-top: 105px;
+    padding-top: 1rem;
     font-size: 22px;
     display: none;
     transition: all 1s ease-in-out;
@@ -241,4 +241,36 @@ body{
 }
 .chat-form button:hover{
     background-color: #13c8d9;
+}
+
+
+/*============================*/
+.tab-panel__player-info {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.tab-panel__player-info::-webkit-scrollbar {
+    width: 10px;
+}
+
+.tab-panel__player-info::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+    background: rgba(0,0,0, .1 );
+}
+.player-information {
+    padding: 0 .25rem;
+    margin-bottom: .25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.player-information span {
+    border-bottom: 1px solid;
+    font-size: 14px;
+}
+    /*============================*/
+.is-active {
+    background: green;
 }

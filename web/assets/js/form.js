@@ -115,9 +115,9 @@ $(document).ready(function () {
                 $.each(data.players, function (k, v) {
 
                     let li = $('<li>');
-                    let divList =  $('<div>');
-                    let divName =  $('<div>');
-                    let divLvl =  $('<div>');
+                    let divList = $('<div>');
+                    let divName = $('<div>');
+                    let divLvl = $('<div>');
                     let button = $('<button>');
                     let img = $("<img>");
 
@@ -159,7 +159,32 @@ $(document).ready(function () {
         let that = $(this);
         let order = parseInt(that.attr("player-order"));
         let selectedPlayer = app.game.availablePlayers[order];
-        name.val(selectedPlayer.name)
+        name.val(selectedPlayer.name);
+
+        $.each($('.js-player-select'), function (k, v) {
+            $(v).removeClass('is-active');
+        });
+
+        that.addClass('is-active');
+
+        let playerInfo = $('.tab-panel__player-info');
+
+        playerInfo.empty();
+
+        for (let k in selectedPlayer) {
+            if (selectedPlayer.hasOwnProperty(k)) {
+                let v = selectedPlayer[k];
+
+                let p = $('<p>').addClass('player-information');
+                let playerParam = $('<span>').addClass('player-param').text(k);
+                let playerParamVal = $('<span>').addClass('player-param-val').text(v);
+
+                p.append(playerParam).append(playerParamVal);
+
+                playerInfo.append(p);
+            }
+        }
+
         console.log(selectedPlayer)
     }
 
