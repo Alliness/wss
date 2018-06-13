@@ -1,7 +1,6 @@
 package alliness.wss.game.player;
 
-import alliness.wss.game.battle.BattleManager;
-import alliness.wss.game.player.dto.PlayerDTO;
+import alliness.wss.game.managers.LobbyManager;
 import alliness.wss.socket.WebSocketConnection;
 import org.json.JSONObject;
 
@@ -28,16 +27,8 @@ public class Avatar {
         return player;
     }
 
-    public JSONObject getInfo() {
-        JSONObject connectionData = connection.getInfo();
-        connectionData.remove("fromClient");
-        connectionData.remove("toClient");
-        return new JSONObject().put("player", player.serialize())
-                               .put("connection", connectionData);
-    }
-
     public void disconnect() {
-        BattleManager.getInstance().disconnect(this);
+        LobbyManager.getInstance().disconnect(this);
     }
 
     public BodyPartEnum getDefence() {

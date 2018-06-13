@@ -3,10 +3,9 @@ package alliness.wss.api;
 import alliness.core.Dir;
 import alliness.core.Serializable;
 import alliness.core.helpers.FReader;
-import alliness.wss.App;
 import alliness.wss.game.GameException;
 import alliness.wss.game.GameWorld;
-import alliness.wss.game.battle.BattleManager;
+import alliness.wss.game.managers.LobbyManager;
 import alliness.wss.game.player.*;
 import alliness.wss.game.player.dto.PlayerDTO;
 import alliness.wss.socket.WebSocketConnection;
@@ -91,7 +90,7 @@ public class PlayerHandler extends AbstractApiHandler {
         try {
 
             Player player = Serializable.deserialize(FReader.readJSON(file), Player.class);
-            if (BattleManager.getInstance().isOnline(player.getName())) {
+            if (LobbyManager.getInstance().isOnline(player.getName())) {
                 return jsonFailMessage(String.format("player %s already selected", name));
             }
             GameWorld.getInstance().createAvatar(player, connection);
@@ -106,7 +105,7 @@ public class PlayerHandler extends AbstractApiHandler {
         JSONObject body = new JSONObject(request.body());
         String name = body.getString("name");
 
-        return BattleManager.getInstance().disconnect(name);
+        return LobbyManager.getInstance().disconnect(name);
     }
 
     public static Object availablePlayers(Request request, Response response) {
@@ -122,10 +121,10 @@ public class PlayerHandler extends AbstractApiHandler {
             try {
                 JSONObject obj = FReader.readJSON(file);
                 Player player = Serializable.deserialize(obj, Player.class);
-                if (BattleManager.getInstance()
-                        .getOnlineList()
-                        .stream()
-                        .noneMatch(avatar -> avatar.equals(player.getName()))
+                if (LobbyManager.getInstance()
+                                .getOnlineList()
+                                .stream()
+                                .noneMatch(avatar -> avatar.equals(player.getName()))
                         ) {
                     players.put(player.serialize());
                 }

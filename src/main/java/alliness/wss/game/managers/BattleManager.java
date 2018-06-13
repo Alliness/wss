@@ -1,4 +1,4 @@
-package alliness.wss.game.battle;
+package alliness.wss.game.managers;
 
 import alliness.wss.game.GameException;
 import alliness.wss.game.player.Avatar;
@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class BattleRoom {
+public class BattleManager {
 
 
     private final String       roomId;
     private       List<Avatar> avatars;
     private       int          playersReady;
 
-    public BattleRoom(Avatar avatarOne, Avatar avatarTwo) {
+    public BattleManager(Avatar avatarOne, Avatar avatarTwo) {
         playersReady = 0;
         avatars = new ArrayList<>();
         roomId = UUID.randomUUID().toString();
@@ -29,8 +29,8 @@ public class BattleRoom {
             collapseBattle();
         }));
 
-        avatarOne.getConnection().sendMessage("battle/start", new JSONObject().put("roomId", roomId).put("enemy", avatarTwo.getPlayer().serialize()));
-        avatarTwo.getConnection().sendMessage("battle/start", new JSONObject().put("roomId", roomId).put("enemy", avatarOne.getPlayer().serialize()));
+        avatarOne.getConnection().sendMessage("managers/start", new JSONObject().put("roomId", roomId).put("enemy", avatarTwo.getPlayer().serialize()));
+        avatarTwo.getConnection().sendMessage("managers/start", new JSONObject().put("roomId", roomId).put("enemy", avatarOne.getPlayer().serialize()));
     }
 
     private void disconnect(WebSocketConnection.Connection connection) {
@@ -40,12 +40,12 @@ public class BattleRoom {
     private void collapseBattle() {
         avatars.forEach(avatar -> {
             try {
-                BattleManager.getInstance().addAvatar(avatar);
+                LobbyManager.getInstance().addAvatar(avatar);
             } catch (GameException e) {
                 disconnect(avatar.getConnection());
             }
         });
-        BattleManager.getInstance().closeRoom(this);
+        LobbyManager.getInstance().closeRoom(this);
     }
 
     public String getRoomId() {
@@ -78,17 +78,17 @@ public class BattleRoom {
 
             Avatar av = getAvatar(connection.getUUID());
             if (av.isLocked()) {
-                connection.sendMessage("battle/error", new JSONObject().put("message", "player locked"));
+                connection.sendMessage("managers/error", new JSONObject().put("message", "player locked"));
                 return;
             }
             av.setAttack(attackPart);
             av.setDefence(defencePart);
             playersReady++;
             av.setLocked(true);
-            connection.sendMessage("battle/locked", new JSONObject());
+            connection.sendMessage("managers/locked", new JSONObject());
             checkTurnIsReady();
         } catch (GameException e) {
-            connection.sendMessage("battle/error", e.jsonMessage());
+            connection.sendMessage("managers/error", e.jsonMessage());
         }
     }
 
@@ -110,7 +110,7 @@ public class BattleRoom {
                avatars.forEach(target -> {
                    JSONObject data =new JSONObject();
                    data.put("defeated", avatar.getPlayer());
-                   target.getConnection().sendMessage("battle/end", data);
+                   target.getConnection().sendMessage("managers/end", data);
                });
                collapseBattle();
             }
@@ -125,7 +125,7 @@ public class BattleRoom {
             .put("player", player.getPlayer().serialize())
             .put("enemy", enemy.getPlayer().serialize());
 
-        player.getConnection().sendMessage("battle/turn", data);
+        player.getConnection().sendMessage("managers/turn", data);
 
     }
 
@@ -137,7 +137,7 @@ public class BattleRoom {
         playersReady = 0;
         avatars.forEach(avatar -> {
             avatar.setLocked(false);
-            avatar.getConnection().sendMessage("battle/unlock", new JSONObject());
+            avatar.getConnection().sendMessage("managers/unlock", new JSONObject());
         });
     }
 

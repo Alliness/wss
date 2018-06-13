@@ -30,14 +30,6 @@ public class Api extends Thread {
             response.type("application/json;charset=UTF-8");
         });
 
-        path("/api", () -> {
-            get("/info", ApiHandler::info);
-        });
-
-        path("/socket", () -> {
-            get("/info", (request, response) -> WebSocketConnection.getInstance().getInfo());
-        });
-
         path("/game", () -> {
             path("/player", () -> {
                 post("/new", PlayerHandler::newPlayer);
@@ -50,7 +42,7 @@ public class Api extends Thread {
                get("/icons", ResourcesHandler::getIcons);
                get("/data", ResourcesHandler::getData);
             });
-            path("/battle", () -> {
+            path("/managers", () -> {
                 get("/info", BattleHandler::getInfo);
             });
         });

@@ -1,9 +1,8 @@
 package alliness.wss.socket;
 
-import alliness.wss.game.GameException;
 import alliness.wss.game.GameWorld;
-import alliness.wss.game.battle.BattleManager;
-import alliness.wss.game.battle.ChatManager;
+import alliness.wss.game.managers.LobbyManager;
+import alliness.wss.game.managers.ChatManager;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,18 +18,17 @@ public class MessageHandler {
             JSONObject data   = obj.getJSONObject("data");
 
             switch (action) {
-                case "chat/send":
-                    ChatManager.getInstance().handle(data, connection);
+                case "lobby/invite":
+                    LobbyManager.getInstance().inviteToBattle(data, connection);
                     break;
-
                 case "battle/attack":
-                    BattleManager.getInstance().setAttack(data, connection);
+                    LobbyManager.getInstance().setAttack(data, connection);
                     break;
             }
 
         } catch (JSONException e) {
             log.error("unable to handle message", e);
-            connection.sendMessage("battle/error", new JSONObject().put("message", e.getMessage()));
+            connection.sendMessage("game/exception", new JSONObject().put("message", e.getMessage()));
         }
     }
 }
