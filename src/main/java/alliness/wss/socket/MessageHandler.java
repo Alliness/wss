@@ -2,7 +2,6 @@ package alliness.wss.socket;
 
 import alliness.wss.game.GameWorld;
 import alliness.wss.game.managers.LobbyManager;
-import alliness.wss.game.managers.ChatManager;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;

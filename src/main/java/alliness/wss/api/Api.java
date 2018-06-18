@@ -26,9 +26,7 @@ public class Api extends Thread {
 
         externalStaticFileLocation(Dir.WEB);
 
-        before((request, response) -> {
-            response.type("application/json;charset=UTF-8");
-        });
+        before((request, response) -> response.type("application/json;charset=UTF-8"));
 
         path("/game", () -> {
             path("/player", () -> {
@@ -43,7 +41,6 @@ public class Api extends Thread {
                get("/data", ResourcesHandler::getData);
             });
             path("/managers", () -> {
-                get("/info", BattleHandler::getInfo);
             });
         });
 

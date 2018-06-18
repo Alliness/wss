@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class LobbyManager {
+public class LobbyManager extends Thread{
 
     private        List<Avatar> lobbyList;
     private static LobbyManager instance;
@@ -20,6 +20,7 @@ public class LobbyManager {
     private LobbyManager() {
         lobbyList = new LinkedList<>();
         battleRooms = new HashMap<>();
+        start();
     }
 
     public static LobbyManager getInstance() {
@@ -42,8 +43,8 @@ public class LobbyManager {
                 throw new GameException("duplicate connections");
             }
         }
-        lobbyList.forEach(avatar1 -> avatar1.getConnection()
-                                            .sendMessage("managers/connected", avatar.getPlayer().serialize()));
+
+        lobbyList.forEach(avatar1 -> avatar1.getConnection().sendMessage("managers/connected", avatar.getPlayer().serialize()));
         lobbyList.add(avatar);
         sendLobbyInfo(avatar);
     }
@@ -90,15 +91,15 @@ public class LobbyManager {
 
     public boolean disconnect(String name) {
 
-        Avatar target = null;
+        boolean found = false;
         for (Avatar avatar : lobbyList) {
             if (avatar.getPlayer().getName().equals(name)) {
-                target = avatar;
+                found = true;
                 avatar.disconnect();
+                disconnect(avatar);
             }
         }
-        disconnect(target);
-        return target != null;
+        return found;
     }
 
     public void disconnect(WebSocketConnection.Connection connection) {
@@ -143,9 +144,5 @@ public class LobbyManager {
 
     public void inviteToBattle(JSONObject data, WebSocketConnection.Connection connection) {
 
-    }
-
-    public boolean isOnline(String name) {
-        return onlineList.contains(name);
     }
 }

@@ -5,6 +5,7 @@ import alliness.core.Serializable;
 import alliness.core.helpers.FReader;
 import alliness.wss.game.GameException;
 import alliness.wss.game.GameWorld;
+import alliness.wss.game.managers.GameManager;
 import alliness.wss.game.managers.LobbyManager;
 import alliness.wss.game.player.*;
 import alliness.wss.game.player.dto.PlayerDTO;
@@ -36,8 +37,6 @@ public class PlayerHandler extends AbstractApiHandler {
             try {
                 JSONObject defPlayerJson = FReader.readJSON(new File(Dir.RESOURCES + "/players/default/player.json"));
                 PlayerDTO dto = Serializable.deserialize(defPlayerJson, PlayerDTO.class);
-
-
 
                 PlayerFactory pf = new PlayerFactory(dto);
                 pf.setName(name);
@@ -90,7 +89,7 @@ public class PlayerHandler extends AbstractApiHandler {
         try {
 
             Player player = Serializable.deserialize(FReader.readJSON(file), Player.class);
-            if (LobbyManager.getInstance().isOnline(player.getName())) {
+            if (GameManager.getInstance().isOnline(player.getName())) {
                 return jsonFailMessage(String.format("player %s already selected", name));
             }
             GameWorld.getInstance().createAvatar(player, connection);
@@ -121,10 +120,10 @@ public class PlayerHandler extends AbstractApiHandler {
             try {
                 JSONObject obj = FReader.readJSON(file);
                 Player player = Serializable.deserialize(obj, Player.class);
-                if (LobbyManager.getInstance()
-                                .getOnlineList()
-                                .stream()
-                                .noneMatch(avatar -> avatar.equals(player.getName()))
+                if (GameManager.getInstance()
+                               .getOnlinePlayers()
+                               .stream()
+                               .noneMatch(avatar -> avatar.getPlayer().getName().equals(player.getName()))
                         ) {
                     players.put(player.serialize());
                 }

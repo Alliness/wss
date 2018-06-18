@@ -1,6 +1,8 @@
 package alliness.wss.game.player;
 
-import alliness.wss.game.managers.LobbyManager;
+import alliness.wss.game.GameException;
+import alliness.wss.game.interfaces.GameRoomManager;
+import alliness.wss.game.managers.GameManager;
 import alliness.wss.socket.WebSocketConnection;
 import org.json.JSONObject;
 
@@ -9,9 +11,10 @@ public class Avatar {
     private final WebSocketConnection.Connection connection;
     private       Player                         player;
 
-    private BodyPartEnum defence;
-    private BodyPartEnum attack;
-    private boolean      locked;
+    private BodyPartEnum    defence;
+    private BodyPartEnum    attack;
+    private boolean         locked;
+    private GameRoomManager room;
 
     public Avatar(Player player, WebSocketConnection.Connection connection) {
         this.player = player;
@@ -28,7 +31,13 @@ public class Avatar {
     }
 
     public void disconnect() {
-        LobbyManager.getInstance().disconnect(this);
+        connection.sendMessage("player/disconnect", new JSONObject());
+        connection.disconnect();
+    }
+
+    public void disconnect(GameException exception) {
+        connection.sendMessage("player/disconnect", exception.jsonMessage());
+        connection.disconnect();
     }
 
     public BodyPartEnum getDefence() {
@@ -75,5 +84,9 @@ public class Avatar {
 
     public boolean isLocked() {
         return locked;
+    }
+
+    public void moveTo(GameRoomManager room) {
+        this.room = room;
     }
 }

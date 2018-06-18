@@ -1,6 +1,6 @@
 package alliness.wss.game;
 
-import alliness.wss.game.managers.LobbyManager;
+import alliness.wss.game.managers.GameManager;
 import alliness.wss.game.player.Avatar;
 import alliness.wss.game.player.Player;
 import alliness.wss.socket.WebSocketConnection;
@@ -19,12 +19,13 @@ public class GameWorld extends Thread {
     }
 
     private GameWorld() {
-    }
 
+    }
 
     public void createAvatar(Player player, WebSocketConnection.Connection connection) throws GameException {
 
         Avatar avatar = new Avatar(player, connection);
-        LobbyManager.getInstance().addAvatar(avatar);
+        GameManager.getInstance().addAvatar(avatar);
+
     }
 }

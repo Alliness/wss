@@ -3,6 +3,20 @@ $(document).ready(function () {
     setGameData();
 
     setPlayerInfo();
+
+    app.socket.addHandler("battle/connected", function (data) {
+        let waitList = $(".js-players-list");
+        waitList.empty();
+
+        $.each(data.waitList, function (k, v) {
+            let li = $("<li>");
+            li.text(v.name);
+            waitList.append(li);
+            console.log(waitList)
+
+        });
+    });
+
     var name = $("#name"),
         playerClass = $("#playerClass"),
         playerRace = $("#playerRace");
@@ -60,7 +74,7 @@ $(document).ready(function () {
             method: "POST",
             success: function (resp) {
                 if (resp.success) {
-                    app.router.load("battle");
+                    app.router.load("lobby");
                 } else {
                     //todo handle success=false
                 }
