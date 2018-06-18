@@ -3,11 +3,13 @@ package alliness.wss.game.managers;
 import alliness.wss.game.GameException;
 import alliness.wss.game.interfaces.GameRoomManager;
 import alliness.wss.game.player.Avatar;
+import alliness.wss.game.player.Player;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class GameManager implements GameRoomManager {
 
@@ -36,9 +38,12 @@ public class GameManager implements GameRoomManager {
             }
         }
         avatar.moveTo(this);
-        avatar.getConnection().onConnectionClosed(connection -> removeFromRoom(avatar));
-        avatars.add(avatar);
+        avatar.getConnection().onConnectionClosed(connection -> {
+            avatar.getRoom().removeFromRoom(avatar);
+            removeFromRoom(avatar);
+        });
 
+        avatars.add(avatar);
     }
 
     public boolean removeFromRoom(Avatar avatar) {
@@ -50,8 +55,16 @@ public class GameManager implements GameRoomManager {
         avatar.getConnection().disconnect();
     }
 
-    public List<Avatar> getOnlinePlayers() {
+    public List<Avatar> getAvatars() {
         return avatars;
+    }
+
+    public List<Player> getOnlinePlayers() {
+        List<Player> players = new ArrayList<>();
+        for (Avatar avatar : avatars) {
+            players.add(avatar.getPlayer());
+        }
+        return players;
     }
 
     public boolean isOnline(String name) {

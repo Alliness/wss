@@ -27,23 +27,23 @@ public class PlayerHandler extends AbstractApiHandler {
         try {
             JSONObject body = new JSONObject(request.body());
 
-            String name = body.getString("name");
+            String name        = body.getString("name");
             String playerClass = body.getString("playerClass");
-            String playerRace = body.getString("playerRace");
+            String playerRace  = body.getString("playerRace");
 
             if (name == null || Objects.equals(name, "")) {
                 return jsonFailMessage("player name  is invalid");
             }
             try {
                 JSONObject defPlayerJson = FReader.readJSON(new File(Dir.RESOURCES + "/players/default/player.json"));
-                PlayerDTO dto = Serializable.deserialize(defPlayerJson, PlayerDTO.class);
+                PlayerDTO  dto           = Serializable.deserialize(defPlayerJson, PlayerDTO.class);
 
                 PlayerFactory pf = new PlayerFactory(dto);
                 pf.setName(name);
                 pf.setPlayerClass(PlayerClassEnum.valueOf(playerClass.toUpperCase()));
                 pf.setPlayerRace(PlayerRaceEnum.valueOf(playerRace.toUpperCase()));
                 Player player = pf.build();
-                File dir = new File(Dir.RESOURCES + "/players/created/");
+                File   dir    = new File(Dir.RESOURCES + "/players/created/");
 
                 if (!dir.exists())
                     dir.mkdir();
@@ -70,8 +70,8 @@ public class PlayerHandler extends AbstractApiHandler {
     static Object connect(Request request, Response response) {
 
         JSONObject body = new JSONObject(request.body());
-        String uuid = body.getString("uuid");
-        String name = body.getString("name");
+        String     uuid = body.getString("uuid");
+        String     name = body.getString("name");
 
 
         WebSocketConnection.Connection connection = WebSocketConnection.getInstance().getConnection(uuid);
@@ -100,17 +100,10 @@ public class PlayerHandler extends AbstractApiHandler {
 
     }
 
-    public static Object disconnect(Request request, Response response) {
-        JSONObject body = new JSONObject(request.body());
-        String name = body.getString("name");
-
-        return LobbyManager.getInstance().disconnect(name);
-    }
-
     public static Object availablePlayers(Request request, Response response) {
         JSONArray players = new JSONArray();
 
-        File dir = new File(Dir.RESOURCES + "/players/created");
+        File   dir   = new File(Dir.RESOURCES + "/players/created");
         File[] files = dir.listFiles();
 
         if (files == null) {
@@ -118,12 +111,12 @@ public class PlayerHandler extends AbstractApiHandler {
         }
         for (File file : files) {
             try {
-                JSONObject obj = FReader.readJSON(file);
-                Player player = Serializable.deserialize(obj, Player.class);
+                JSONObject obj    = FReader.readJSON(file);
+                Player     player = Serializable.deserialize(obj, Player.class);
                 if (GameManager.getInstance()
                                .getOnlinePlayers()
                                .stream()
-                               .noneMatch(avatar -> avatar.getPlayer().getName().equals(player.getName()))
+                               .noneMatch(playerAvatar -> playerAvatar.getName().equals(player.getName()))
                         ) {
                     players.put(player.serialize());
                 }
@@ -136,7 +129,7 @@ public class PlayerHandler extends AbstractApiHandler {
 
     public static Object getInfo(Request request, Response response) {
         String[] parsed = request.uri().split("/");
-        String name = parsed[parsed.length - 1];
+        String   name   = parsed[parsed.length - 1];
         try {
             JSONObject player = FReader.readJSON(Dir.RESOURCES + "/players/created/" + name + ".json");
             return jsonSuccessMessage("player", player);

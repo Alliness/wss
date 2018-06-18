@@ -89,4 +89,8 @@ public class Avatar {
     public void moveTo(GameRoomManager room) {
         this.room = room;
     }
+
+    public GameRoomManager getRoom() {
+        return room;
+    }
 }

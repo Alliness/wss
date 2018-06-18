@@ -1,6 +1,7 @@
 package alliness.wss.game.managers;
 
 import alliness.wss.game.GameException;
+import alliness.wss.game.interfaces.GameRoomManager;
 import alliness.wss.game.player.Avatar;
 import alliness.wss.socket.WebSocketConnection;
 import org.json.JSONArray;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class LobbyManager extends Thread{
+public class LobbyManager extends Thread implements GameRoomManager{
 
     private        List<Avatar> lobbyList;
     private static LobbyManager instance;
@@ -35,27 +36,34 @@ public class LobbyManager extends Thread{
      *
      * @param avatar {@link Avatar}
      */
-    public void addAvatar(Avatar avatar) throws GameException {
+    public void addAvatar(Avatar avatar){
 
         for (Avatar av : lobbyList) {
             if (av.getConnection().getUUID().equals(avatar.getConnection().getUUID())) {
-                av.disconnect();
-                throw new GameException("duplicate connections");
+                GameException exception = new GameException("duplicate connection");
+                av.disconnect(exception);
+                avatar.disconnect(exception);
+                return;
             }
         }
 
+        avatar.moveTo(this);
         lobbyList.forEach(avatar1 -> avatar1.getConnection().sendMessage("managers/connected", avatar.getPlayer().serialize()));
         lobbyList.add(avatar);
         sendLobbyInfo(avatar);
+
+    }
+
+    @Override
+    public boolean removeFromRoom(Avatar avatar) {
+        return false;
     }
 
     private void sendLobbyInfo(Avatar avatar) {
         JSONObject lobbyInfo = new JSONObject();
         JSONArray  players   = new JSONArray();
 
-        lobbyList.forEach(avatar1 -> {
-            players.put(avatar1.getPlayer().serialize());
-        });
+        lobbyList.forEach(avatar1 -> players.put(avatar1.getPlayer().serialize()));
         lobbyInfo.put("rooms", getBattleRooms().size());
         lobbyInfo.put("players", players);
 
@@ -87,36 +95,6 @@ public class LobbyManager extends Thread{
 
     public HashMap<String, BattleManager> getBattleRooms() {
         return battleRooms;
-    }
-
-    public boolean disconnect(String name) {
-
-        boolean found = false;
-        for (Avatar avatar : lobbyList) {
-            if (avatar.getPlayer().getName().equals(name)) {
-                found = true;
-                avatar.disconnect();
-                disconnect(avatar);
-            }
-        }
-        return found;
-    }
-
-    public void disconnect(WebSocketConnection.Connection connection) {
-        for (Avatar avatar : lobbyList) {
-            if (avatar.getConnection().getUUID().equals(connection.getUUID())) {
-                disconnect(avatar);
-            }
-        }
-    }
-
-    public void disconnect(Avatar av) {
-        lobbyList.removeIf(avatar -> avatar.equals(av));
-        lobbyList.forEach(avatar -> avatar.getConnection()
-                                          .sendMessage(
-                                                  "lobby/disconnect",
-                                                  new JSONObject().put("name", av.getPlayer().serialize())
-                                          ));
     }
 
     public void closeRoom(BattleManager battleInstance) {
