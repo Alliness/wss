@@ -93,4 +93,10 @@ public class Avatar {
     public GameRoomManager getRoom() {
         return room;
     }
+
+    public void exitFromRoom() {
+        if (room != null) {
+            room.removeFromRoom(this);
+        }
+    }
 }

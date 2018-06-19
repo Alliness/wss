@@ -93,7 +93,7 @@ public class PlayerHandler extends AbstractApiHandler {
                 return jsonFailMessage(String.format("player %s already selected", name));
             }
             GameWorld.getInstance().createAvatar(player, connection);
-            return new JSONObject().put("success", true);
+            return jsonSuccessMessage("success", true);
         } catch (FileNotFoundException | GameException e) {
             return jsonFailMessage(e.getMessage());
         }
@@ -134,6 +134,24 @@ public class PlayerHandler extends AbstractApiHandler {
             JSONObject player = FReader.readJSON(Dir.RESOURCES + "/players/created/" + name + ".json");
             return jsonSuccessMessage("player", player);
         } catch (Exception e) {
+            return jsonFailMessage(e.getMessage());
+        }
+    }
+
+    public static Object disconnect(Request request, Response response) {
+        try {
+            JSONObject json = new JSONObject(request.body());
+
+            if(GameManager.getInstance().isOnline(json.getString("name"))){
+
+                GameManager.getInstance().getAvatar(json.getString("name"), null).disconnect();
+
+            }else{
+                return jsonSuccessMessage("success", false);
+            }
+
+            return jsonSuccessMessage("success", true);
+        } catch (JSONException e) {
             return jsonFailMessage(e.getMessage());
         }
     }

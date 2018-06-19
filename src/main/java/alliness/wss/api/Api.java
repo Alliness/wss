@@ -2,7 +2,6 @@ package alliness.wss.api;
 
 import alliness.core.ConfigLoader;
 import alliness.core.Dir;
-import alliness.wss.socket.WebSocketConnection;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 

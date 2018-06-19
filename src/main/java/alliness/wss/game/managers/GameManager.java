@@ -4,12 +4,12 @@ import alliness.wss.game.GameException;
 import alliness.wss.game.interfaces.GameRoomManager;
 import alliness.wss.game.player.Avatar;
 import alliness.wss.game.player.Player;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class GameManager implements GameRoomManager {
 
@@ -38,25 +38,22 @@ public class GameManager implements GameRoomManager {
             }
         }
         avatar.moveTo(this);
+
         avatar.getConnection().onConnectionClosed(connection -> {
-            avatar.getRoom().removeFromRoom(avatar);
-            removeFromRoom(avatar);
+            avatar.exitFromRoom();
         });
 
+        sendConnectedMessage(avatar);
+        sendRoomInfoMessage(avatar);
         avatars.add(avatar);
     }
 
     public boolean removeFromRoom(Avatar avatar) {
-        return avatars.removeIf(avatar::equals);
-    }
-
-    public void kick(Avatar avatar, String reason) {
-        avatar.getConnection().sendMessage("player/kick", new JSONObject().put("reason", reason));
-        avatar.getConnection().disconnect();
-    }
-
-    public List<Avatar> getAvatars() {
-        return avatars;
+        boolean result = avatars.removeIf(avatar::equals);
+        if (result) {
+            sendLeaveMessage(avatar);
+        }
+        return result;
     }
 
     public List<Player> getOnlinePlayers() {
@@ -69,5 +66,31 @@ public class GameManager implements GameRoomManager {
 
     public boolean isOnline(String name) {
         return avatars.stream().anyMatch(avatar -> avatar.getPlayer().getName().equals(name));
+    }
+
+    @Override
+    public void sendConnectedMessage(Avatar avatar) {
+        avatars.forEach(avatar1 -> avatar1.getConnection().sendMessage("room/connected", avatar.getPlayer().serialize()));
+    }
+
+    @Override
+    public void sendLeaveMessage(Avatar avatar) {
+        avatars.forEach(avatar1 -> avatar1.getConnection().sendMessage("room/leave", avatar.getPlayer().serialize()));
+    }
+
+    @Override
+    public void sendRoomInfoMessage(Avatar avatar) {
+        JSONObject json = new JSONObject();
+        json.put("online", new JSONArray().put(getOnlinePlayers()));
+        avatar.getConnection().sendMessage("room/info", json);
+    }
+
+    public Avatar getAvatar(String name, String uuid) {
+        for (Avatar avatar : avatars) {
+            if (avatar.getPlayer().getName().equals(name) || avatar.getConnection().getUUID().equals(uuid)) {
+                return avatar;
+            }
+        }
+        return null;
     }
 }

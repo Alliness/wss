@@ -39,11 +39,7 @@ public class BattleManager {
 
     private void collapseBattle() {
         avatars.forEach(avatar -> {
-            try {
-                LobbyManager.getInstance().addAvatar(avatar);
-            } catch (GameException e) {
-                disconnect(avatar.getConnection());
-            }
+            LobbyManager.getInstance().addAvatar(avatar);
         });
         LobbyManager.getInstance().closeRoom(this);
     }

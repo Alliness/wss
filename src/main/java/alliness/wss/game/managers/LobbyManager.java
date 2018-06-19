@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class LobbyManager extends Thread implements GameRoomManager{
+public class LobbyManager extends Thread implements GameRoomManager {
 
     private        List<Avatar> lobbyList;
     private static LobbyManager instance;
@@ -31,12 +31,7 @@ public class LobbyManager extends Thread implements GameRoomManager{
         return instance;
     }
 
-    /**
-     * add new {@link Avatar} to managers lobby(lobbyList)
-     *
-     * @param avatar {@link Avatar}
-     */
-    public void addAvatar(Avatar avatar){
+    public void addAvatar(Avatar avatar) {
 
         for (Avatar av : lobbyList) {
             if (av.getConnection().getUUID().equals(avatar.getConnection().getUUID())) {
@@ -46,17 +41,21 @@ public class LobbyManager extends Thread implements GameRoomManager{
                 return;
             }
         }
-
         avatar.moveTo(this);
-        lobbyList.forEach(avatar1 -> avatar1.getConnection().sendMessage("managers/connected", avatar.getPlayer().serialize()));
+
+        sendRoomInfoMessage(avatar);
+        sendConnectedMessage(avatar);
         lobbyList.add(avatar);
-        sendLobbyInfo(avatar);
 
     }
 
     @Override
     public boolean removeFromRoom(Avatar avatar) {
-        return false;
+        boolean result = lobbyList.removeIf(avatar1 -> avatar1.getConnection().getUUID().equals(avatar.getConnection().getUUID()));
+        if(result){
+            sendLeaveMessage(avatar);
+        }
+        return result;
     }
 
     private void sendLobbyInfo(Avatar avatar) {
@@ -70,13 +69,6 @@ public class LobbyManager extends Thread implements GameRoomManager{
         avatar.getConnection().sendMessage("lobby/info", lobbyInfo);
     }
 
-    /**
-     * Create managers room {@link BattleManager} instance for two avatars
-     *
-     * @param avatar  {@link Avatar} player 1
-     * @param avatar1 {@link Avatar} player 2
-     *                Those players moved from lobbyList to battleRoom
-     */
     private void battleBegin(Avatar avatar, Avatar avatar1) {
 
         BattleManager battle = new BattleManager(avatar, avatar1);
@@ -87,11 +79,6 @@ public class LobbyManager extends Thread implements GameRoomManager{
         lobbyList.removeIf(av -> av == avatar);
         lobbyList.removeIf(av -> av == avatar1);
     }
-
-    public List<Avatar> getLobbyList() {
-        return lobbyList;
-    }
-
 
     public HashMap<String, BattleManager> getBattleRooms() {
         return battleRooms;
@@ -109,7 +96,6 @@ public class LobbyManager extends Thread implements GameRoomManager{
         }
     }
 
-
     public void setAttack(JSONObject data, WebSocketConnection.Connection connection) {
         try {
             BattleManager room = getRoom(data.getString("roomId"));
@@ -122,5 +108,28 @@ public class LobbyManager extends Thread implements GameRoomManager{
 
     public void inviteToBattle(JSONObject data, WebSocketConnection.Connection connection) {
 
+    }
+
+    @Override
+    public void sendConnectedMessage(Avatar avatar) {
+        lobbyList.forEach(avatar1 -> {
+            avatar1.getConnection().sendMessage("lobby/connected", avatar.getPlayer().serialize());
+        });
+    }
+
+    @Override
+    public void sendLeaveMessage(Avatar avatar) {
+        lobbyList.forEach(avatar1 -> {
+            avatar1.getConnection().sendMessage("lobby/leave", avatar.getPlayer().serialize());
+        });
+    }
+
+    @Override
+    public void sendRoomInfoMessage(Avatar avatar) {
+        JSONObject json = new JSONObject();
+        json.put("roomList", new JSONArray().put(lobbyList));
+        json.put("inBattle", battleRooms.size() * 2);
+        json.put("queue", false);
+        avatar.getConnection().sendMessage("lobby/info", json);
     }
 }
