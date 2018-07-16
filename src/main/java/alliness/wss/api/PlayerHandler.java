@@ -73,8 +73,12 @@ public class PlayerHandler extends AbstractApiHandler {
         String     uuid = body.getString("uuid");
         String     name = body.getString("name");
 
-
-        WebSocketConnection.Connection connection = WebSocketConnection.getInstance().getConnection(uuid);
+        WebSocketConnection.Connection connection = null;
+        try{
+            connection = WebSocketConnection.getInstance().getConnection(uuid);
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+        }
 
         if (connection == null) {
             return jsonFailMessage(String.format("not found connection with uuid %s", uuid));
@@ -94,7 +98,7 @@ public class PlayerHandler extends AbstractApiHandler {
             }
             GameWorld.getInstance().createAvatar(player, connection);
             return jsonSuccessMessage("success", true);
-        } catch (FileNotFoundException | GameException e) {
+        } catch (Exception e) {
             return jsonFailMessage(e.getMessage());
         }
 
@@ -144,7 +148,7 @@ public class PlayerHandler extends AbstractApiHandler {
 
             if(GameManager.getInstance().isOnline(json.getString("name"))){
 
-                GameManager.getInstance().getAvatar(json.getString("name"), null).disconnect();
+                GameManager.getInstance().getAvatar(json.getString("name"), null).getConnection().disconnect();
 
             }else{
                 return jsonSuccessMessage("success", false);

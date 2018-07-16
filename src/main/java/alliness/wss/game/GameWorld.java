@@ -22,7 +22,7 @@ public class GameWorld extends Thread {
 
     }
 
-    public void createAvatar(Player player, WebSocketConnection.Connection connection) throws GameException {
+    public void createAvatar(Player player, WebSocketConnection.Connection connection) {
 
         Avatar avatar = new Avatar(player, connection);
         GameManager.getInstance().addAvatar(avatar);

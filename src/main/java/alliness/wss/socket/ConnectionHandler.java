@@ -1,7 +1,5 @@
 package alliness.wss.socket;
 
-import alliness.wss.game.managers.GameManager;
-import alliness.wss.game.managers.LobbyManager;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -16,7 +14,6 @@ public class ConnectionHandler {
     public void onClose(int statusCode, String reason) {
         log.info(String.format("[WS]Client(%s)leave: statusCode=%s, reason=%s", connection.getSession().getRemoteAddress(), statusCode, reason));
         connection.disconnect();
-        GameManager.getInstance().getAvatar(null, connection.getUUID()).exitFromRoom();
     }
 
     @OnWebSocketError

@@ -19,7 +19,6 @@ public class Avatar {
     public Avatar(Player player, WebSocketConnection.Connection connection) {
         this.player = player;
         this.connection = connection;
-        this.connection.onConnectionClosed(conn -> disconnect());
     }
 
     public WebSocketConnection.Connection getConnection() {
@@ -28,11 +27,6 @@ public class Avatar {
 
     public Player getPlayer() {
         return player;
-    }
-
-    public void disconnect() {
-        connection.sendMessage("player/disconnect", new JSONObject());
-        connection.disconnect();
     }
 
     public void disconnect(GameException exception) {

@@ -41,11 +41,12 @@ public class GameManager implements GameRoomManager {
 
         avatar.getConnection().onConnectionClosed(connection -> {
             avatar.exitFromRoom();
+            removeFromRoom(avatar);
         });
 
+        avatars.add(avatar);
         sendConnectedMessage(avatar);
         sendRoomInfoMessage(avatar);
-        avatars.add(avatar);
     }
 
     public boolean removeFromRoom(Avatar avatar) {
@@ -81,7 +82,7 @@ public class GameManager implements GameRoomManager {
     @Override
     public void sendRoomInfoMessage(Avatar avatar) {
         JSONObject json = new JSONObject();
-        json.put("online", new JSONArray().put(getOnlinePlayers()));
+        json.put("online", new JSONArray(getOnlinePlayers()));
         avatar.getConnection().sendMessage("room/info", json);
     }
 
