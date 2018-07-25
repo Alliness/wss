@@ -274,3 +274,20 @@ body{
 .is-active {
     background: green;
 }
+.game-content{
+    width: 480px;
+}
+
+.game-nav{
+    width: 240px;    
+}
+.left-nav{
+    background-color: red;
+}
+.right-nav{
+    background-color: green;
+}
+.game-content{
+    width: 100%;
+    background-color: darkcyan;
+}

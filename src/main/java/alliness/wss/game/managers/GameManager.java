@@ -47,6 +47,7 @@ public class GameManager implements GameRoomManager {
         avatars.add(avatar);
         sendConnectedMessage(avatar);
         sendRoomInfoMessage(avatar);
+        sendPlayerInfo(avatar);
     }
 
     public boolean removeFromRoom(Avatar avatar) {
@@ -93,5 +94,9 @@ public class GameManager implements GameRoomManager {
             }
         }
         return null;
+    }
+
+    private void sendPlayerInfo(Avatar avatar) {
+        avatar.getConnection().sendMessage("player/info", avatar.getPlayer().serialize());
     }
 }

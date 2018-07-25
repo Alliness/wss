@@ -7,21 +7,13 @@ $(document).ready(function () {
     app.socket = socket;
     app.router = router;
 
-    router.load("form");
-
-
     socket.addHandler("connection/id", function (message) {
         app.socket.uuid = message.uuid;
-    });
+    })
 
-    socket.addHandler("battle/connected", function (message) {
-        app.player = {};
-        app.player.info = message.player;
-    });
-
-    socket.addHandler("battle/state", function (message) {
-        $(".state").text(message.state);
-    });
+    socket.addHandler("player/disconnect", function (message) {
+        document.location.href="/"
+    })
 
     $(".nav-btn").click(function () {
         let that = $(this);

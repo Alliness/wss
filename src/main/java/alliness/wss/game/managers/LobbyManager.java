@@ -49,6 +49,7 @@ public class LobbyManager extends Thread implements GameRoomManager {
 
     }
 
+
     @Override
     public boolean removeFromRoom(Avatar avatar) {
         boolean result = lobbyList.removeIf(avatar1 -> avatar1.getConnection().getUUID().equals(avatar.getConnection().getUUID()));

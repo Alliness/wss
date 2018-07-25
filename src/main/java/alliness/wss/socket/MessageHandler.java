@@ -2,6 +2,7 @@ package alliness.wss.socket;
 
 import alliness.wss.game.GameWorld;
 import alliness.wss.game.managers.LobbyManager;
+import alliness.wss.socket.handlers.PlayerMessageHandler;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +24,8 @@ public class MessageHandler {
                 case "battle/attack":
                     LobbyManager.getInstance().setAttack(data, connection);
                     break;
+                case "player/action":
+                    PlayerMessageHandler.handleAction(data, connection);
             }
 
         } catch (JSONException e) {

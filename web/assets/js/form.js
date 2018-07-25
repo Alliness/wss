@@ -17,6 +17,10 @@ $(document).ready(function () {
         });
     });
 
+    app.socket.addHandler("player/info", function(data){
+        app.game.player = data;
+    });
+
     var name = $("#name"),
         playerClass = $("#playerClass"),
         playerRace = $("#playerRace");
@@ -74,7 +78,7 @@ $(document).ready(function () {
             method: "POST",
             success: function (resp) {
                 if (resp.success) {
-                    app.router.load("lobby");
+                    app.router.load("main");
                 } else {
                     //todo handle success=false
                 }
